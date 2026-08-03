@@ -1,0 +1,20 @@
+<div class="confirm-dialog">
+      <div mat-dialog-title class="dialog-title">
+        <mat-icon *ngIf="data.danger" class="warn-icon">warning</mat-icon>
+        {{ data.title }}
+      </div>
+      <mat-dialog-content>
+        <p>{{ data.message }}</p>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-button (click)="cancel()">
+          {{ data.cancelLabel ?? 'Cancelar' }}
+        </button>
+        <button
+          mat-flat-button
+          [color]="data.danger ? 'warn' : 'primary'"
+          (click)="confirm()">
+          {{ data.confirmLabel ?? 'Confirmar' }}
+        </button>
+      </mat-dialog-actions>
+    </div>

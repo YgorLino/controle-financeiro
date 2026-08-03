@@ -28,75 +28,8 @@ function passwordMatch(control: AbstractControl) {
     MatFormFieldModule, MatInputModule,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule
   ],
-  template: `
-    <div class="auth-card fade-up">
-      <div class="auth-header">
-        <h2>Criar conta</h2>
-        <p>Comece a organizar suas finanças hoje</p>
-      </div>
-
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
-        <mat-form-field appearance="outline">
-          <mat-label>Nome completo</mat-label>
-          <input matInput formControlName="name" placeholder="Seu nome" autocomplete="name">
-          <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="form.get('name')?.hasError('required')">Informe seu nome.</mat-error>
-          <mat-error *ngIf="form.get('name')?.hasError('minlength')">Mínimo 2 caracteres.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>E-mail</mat-label>
-          <input matInput type="email" formControlName="email"
-                 placeholder="seu@email.com" autocomplete="email">
-          <mat-icon matSuffix>mail</mat-icon>
-          <mat-error *ngIf="form.get('email')?.hasError('required')">Informe seu e-mail.</mat-error>
-          <mat-error *ngIf="form.get('email')?.hasError('email')">E-mail inválido.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Senha</mat-label>
-          <input matInput [type]="showPwd() ? 'text' : 'password'"
-                 formControlName="password" autocomplete="new-password">
-          <button mat-icon-button matSuffix type="button" (click)="showPwd.set(!showPwd())">
-            <mat-icon>{{ showPwd() ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-          <mat-error *ngIf="form.get('password')?.hasError('required')">Informe uma senha.</mat-error>
-          <mat-error *ngIf="form.get('password')?.hasError('minlength')">Mínimo 6 caracteres.</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Confirmar senha</mat-label>
-          <input matInput [type]="showPwd() ? 'text' : 'password'"
-                 formControlName="confirmPassword" autocomplete="new-password">
-          <mat-error *ngIf="form.get('confirmPassword')?.hasError('required')">Confirme sua senha.</mat-error>
-          <mat-error *ngIf="form.hasError('passwordMismatch')">As senhas não coincidem.</mat-error>
-        </mat-form-field>
-
-        <button mat-flat-button color="primary" type="submit"
-                class="submit-btn" [disabled]="loading()">
-          <mat-spinner *ngIf="loading()" diameter="20"></mat-spinner>
-          <span *ngIf="!loading()">Criar conta</span>
-        </button>
-      </form>
-
-      <p class="auth-footer">
-        Já tem conta? <a routerLink="/auth/login">Entrar</a>
-      </p>
-    </div>
-  `,
-  styles: [`
-    .auth-card { width: 100%; max-width: 420px; }
-    .auth-header { margin-bottom: 32px; text-align: center; }
-    .auth-header h2 { font-size: 1.75rem; font-weight: 700; color: var(--cm-text); margin-bottom: 8px; }
-    .auth-header p { color: var(--cm-text-muted); }
-    .auth-form { display: flex; flex-direction: column; gap: 4px; }
-    .submit-btn {
-      width: 100%; height: 48px; font-size: 1rem; font-weight: 600;
-      margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;
-    }
-    .auth-footer { text-align: center; margin-top: 24px; color: var(--cm-text-muted); font-size: .9375rem; }
-    .auth-footer a { font-weight: 600; color: var(--cm-primary); }
-  `]
+  templateUrl: './register.component.html',
+  styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
   private readonly auth = inject(AuthService);

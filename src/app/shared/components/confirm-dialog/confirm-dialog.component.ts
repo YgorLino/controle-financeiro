@@ -18,38 +18,8 @@ export interface ConfirmDialogData {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
-  template: `
-    <div class="confirm-dialog">
-      <div mat-dialog-title class="dialog-title">
-        <mat-icon *ngIf="data.danger" class="warn-icon">warning</mat-icon>
-        {{ data.title }}
-      </div>
-      <mat-dialog-content>
-        <p>{{ data.message }}</p>
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
-        <button mat-button (click)="cancel()">
-          {{ data.cancelLabel ?? 'Cancelar' }}
-        </button>
-        <button
-          mat-flat-button
-          [color]="data.danger ? 'warn' : 'primary'"
-          (click)="confirm()">
-          {{ data.confirmLabel ?? 'Confirmar' }}
-        </button>
-      </mat-dialog-actions>
-    </div>
-  `,
-  styles: [`
-    .confirm-dialog { min-width: 300px; padding: 8px; }
-    .dialog-title {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 1.125rem; font-weight: 600; margin-bottom: 4px;
-    }
-    .warn-icon { color: var(--cm-warn); }
-    p { color: var(--cm-text-muted); line-height: 1.6; }
-    mat-dialog-actions { margin-top: 8px; gap: 8px; }
-  `]
+  templateUrl: './confirm-dialog.component.html',
+  styleUrl: './confirm-dialog.component.scss'
 })
 export class ConfirmDialogComponent {
   constructor(

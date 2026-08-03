@@ -1,0 +1,111 @@
+.page-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
+    }
+    .page-title { font-size: 1.5rem; font-weight: 700; color: var(--cm-text); margin: 0; }
+    .page-subtitle { color: var(--cm-text-muted); font-size: .875rem; margin: 4px 0 0; }
+    .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .generate-btn { display: flex; align-items: center; gap: 6px; }
+
+    .recurring-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .recurring-card {
+      background: var(--cm-surface);
+      border: 1px solid var(--cm-border);
+      border-radius: var(--cm-radius);
+      padding: 20px;
+      box-shadow: var(--cm-shadow);
+      transition: box-shadow var(--cm-transition);
+      &:hover { box-shadow: var(--cm-shadow-md); }
+      &.inactive { opacity: .6; }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .card-icon {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      mat-icon { font-size: 22px; width: 22px; height: 22px; }
+    }
+
+    .card-info { flex: 1; min-width: 0; }
+    .card-title { font-weight: 600; font-size: .9375rem; color: var(--cm-text); display: block; margin-bottom: 6px; }
+    .card-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .card-amount { font-weight: 700; font-size: 1.125rem; white-space: nowrap; }
+    .income-amount { color: var(--cm-income); }
+    .expense-amount { color: var(--cm-expense); }
+
+    .card-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 20px;
+      margin-bottom: 12px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .8125rem;
+      color: var(--cm-text-muted);
+      mat-icon { font-size: 14px; width: 14px; height: 14px; }
+    }
+
+    .cat-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .action-btns { display: flex; gap: 4px; }
+
+    /* Form panel (slide-in overlay) */
+    .form-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.3);
+      backdrop-filter: blur(2px);
+      z-index: 999;
+    }
+
+    .form-panel {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      width: min(580px, 95vw);
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: fade-up 200ms ease-out;
+    }
+
+    .recurring-form {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .form-actions button { display: flex; align-items: center; gap: 6px; }

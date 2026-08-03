@@ -1,0 +1,208 @@
+<div class="cm-page">
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Recorrências</h1>
+          <p class="page-subtitle">Gerencie seus lançamentos recorrentes</p>
+        </div>
+        <div class="header-actions">
+          <app-month-selector
+            [currentDate]="currentMonthDate()"
+            (monthChanged)="onMonthChanged($event)">
+          </app-month-selector>
+
+          <button mat-flat-button (click)="generateForMonth()"
+                  [disabled]="generating()"
+                  class="generate-btn"
+                  id="btn-gerar-recorrencias">
+            <mat-spinner *ngIf="generating()" diameter="18"></mat-spinner>
+            <mat-icon *ngIf="!generating()">autorenew</mat-icon>
+            Gerar para este mês
+          </button>
+
+          <button mat-flat-button color="primary" (click)="openForm()"
+                  id="btn-nova-recorrencia">
+            <mat-icon>add</mat-icon>
+            Nova recorrência
+          </button>
+        </div>
+      </div>
+
+      <!-- Skeleton -->
+      <app-skeleton-loader *ngIf="loading()" [count]="4" height="100px"></app-skeleton-loader>
+
+      <!-- Cards -->
+      <div class="recurring-grid fade-up" *ngIf="!loading() && recurring().length > 0">
+        <div *ngFor="let r of recurring()" class="recurring-card"
+             [class.inactive]="!r.is_active">
+          <div class="card-header">
+            <div class="card-icon"
+                 [style.background]="r.transaction_type === 'income' ? 'rgba(16,185,129,.12)' : 'rgba(239,68,68,.12)'"
+                 [style.color]="r.transaction_type === 'income' ? 'var(--cm-income)' : 'var(--cm-expense)'">
+              <mat-icon>{{ r.transaction_type === 'income' ? 'trending_up' : 'trending_down' }}</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-title">{{ r.description }}</span>
+              <div class="card-chips">
+                <span class="chip" [ngClass]="r.transaction_type === 'income' ? 'chip-income' : 'chip-expense'">
+                  {{ r.transaction_type === 'income' ? 'Entrada' : 'Saída' }}
+                </span>
+                <span class="chip chip-pending">{{ freqLabel(r.frequency) }}</span>
+                <span *ngIf="!r.is_active" class="chip chip-cancelled">Inativa</span>
+              </div>
+            </div>
+            <div class="card-amount"
+                 [class.income-amount]="r.transaction_type === 'income'"
+                 [class.expense-amount]="r.transaction_type === 'expense'">
+              {{ r.amount | currencyBr }}
+            </div>
+          </div>
+
+          <mat-divider style="margin: 12px 0"></mat-divider>
+
+          <div class="card-details">
+            <div class="detail-item">
+              <mat-icon>event</mat-icon>
+              <span>Vencimento: dia {{ r.due_day }}</span>
+            </div>
+            <div class="detail-item" *ngIf="r.category">
+              <span class="cat-dot" [style.background]="$any(r.category)?.color"></span>
+              <span>{{ $any(r.category)?.name }}</span>
+            </div>
+            <div class="detail-item">
+              <mat-icon>date_range</mat-icon>
+              <span>Desde {{ formatDate(r.start_date) }}</span>
+            </div>
+            <div class="detail-item" *ngIf="r.end_date">
+              <mat-icon>event_busy</mat-icon>
+              <span>Até {{ formatDate(r.end_date) }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <mat-slide-toggle
+              [checked]="r.is_active"
+              (change)="toggleActive(r, $event.checked)"
+              color="primary"
+              [matTooltip]="r.is_active ? 'Desativar recorrência' : 'Ativar recorrência'">
+              {{ r.is_active ? 'Ativa' : 'Inativa' }}
+            </mat-slide-toggle>
+
+            <div class="action-btns">
+              <button mat-icon-button (click)="openForm(r)" matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="confirmDelete(r)" matTooltip="Excluir">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <app-empty-state
+        *ngIf="!loading() && recurring().length === 0"
+        icon="autorenew"
+        title="Nenhuma recorrência cadastrada"
+        message="Cadastre despesas ou receitas que se repetem todo mês, como salário, aluguel, assinaturas, etc."
+        actionLabel="Nova recorrência"
+        (action)="openForm()">
+      </app-empty-state>
+
+      <!-- Modal de formulário (inline) -->
+      <div class="form-overlay" *ngIf="showFormDialog()" (click)="closeForm()"></div>
+      <div class="form-panel cm-card" *ngIf="showFormDialog()" (click)="$event.stopPropagation()">
+        <h2 class="cm-section-title">
+          <mat-icon>{{ editingRecurring() ? 'edit' : 'add_circle' }}</mat-icon>
+          {{ editingRecurring() ? 'Editar recorrência' : 'Nova recorrência' }}
+        </h2>
+
+        <form [formGroup]="form" class="recurring-form">
+          <div class="cm-form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo *</mat-label>
+              <mat-select formControlName="transaction_type">
+                <mat-option value="income">Entrada</mat-option>
+                <mat-option value="expense">Saída</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Frequência *</mat-label>
+              <mat-select formControlName="frequency">
+                <mat-option value="monthly">Mensal</mat-option>
+                <mat-option value="weekly">Semanal</mat-option>
+                <mat-option value="yearly">Anual</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Descrição *</mat-label>
+            <input matInput formControlName="description" placeholder="Ex: Salário, Aluguel...">
+            <mat-error>Informe uma descrição.</mat-error>
+          </mat-form-field>
+
+          <div class="cm-form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Valor *</mat-label>
+              <span matPrefix>R$&nbsp;</span>
+              <input matInput type="number" formControlName="amount" min="0.01" step="0.01">
+              <mat-error>Informe um valor válido.</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Dia de vencimento *</mat-label>
+              <input matInput type="number" formControlName="due_day" min="1" max="28">
+              <mat-hint>1–28</mat-hint>
+              <mat-error>Informe o dia (1-28).</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="cm-form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Categoria</mat-label>
+              <mat-select formControlName="category_id">
+                <mat-option value="">Sem categoria</mat-option>
+                <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span style="width:10px;height:10px;border-radius:50%;display:inline-block"
+                          [style.background]="cat.color"></span>
+                    {{ cat.name }}
+                  </div>
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Data de início *</mat-label>
+              <input matInput [matDatepicker]="startPicker" formControlName="start_date_obj">
+              <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+              <mat-datepicker #startPicker></mat-datepicker>
+              <mat-error>Informe a data de início.</mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Data de término (opcional)</mat-label>
+            <input matInput [matDatepicker]="endPicker" formControlName="end_date_obj">
+            <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+            <mat-datepicker #endPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Observação</mat-label>
+            <textarea matInput formControlName="notes" rows="2"></textarea>
+          </mat-form-field>
+        </form>
+
+        <div class="form-actions">
+          <button mat-button (click)="closeForm()">Cancelar</button>
+          <button mat-flat-button color="primary" (click)="onSave()" [disabled]="formLoading()">
+            <mat-spinner *ngIf="formLoading()" diameter="18"></mat-spinner>
+            <mat-icon *ngIf="!formLoading()">save</mat-icon>
+            {{ editingRecurring() ? 'Atualizar' : 'Criar' }}
+          </button>
+        </div>
+      </div>
+    </div>

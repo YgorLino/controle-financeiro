@@ -1,0 +1,54 @@
+<div class="form-dialog">
+      <h2 mat-dialog-title class="dialog-title">
+        <mat-icon>category</mat-icon>
+        {{ isEdit ? 'Editar categoria' : 'Nova categoria' }}
+      </h2>
+
+      <mat-dialog-content class="dialog-content">
+        <form [formGroup]="form" id="category-form">
+          <mat-form-field appearance="outline">
+            <mat-label>Nome *</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Alimentação, Salário...">
+            <mat-error *ngIf="form.get('name')?.hasError('required')">Informe o nome da categoria.</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo *</mat-label>
+            <mat-select formControlName="transaction_type">
+              <mat-option value="income">Entrada</mat-option>
+              <mat-option value="expense">Saída</mat-option>
+              <mat-option value="both">Ambos</mat-option>
+            </mat-select>
+            <mat-error>Selecione o tipo.</mat-error>
+          </mat-form-field>
+
+          <!-- Color picker -->
+          <div class="color-section">
+            <label class="color-label">Cor da categoria</label>
+            <div class="color-preview" [style.background]="form.get('color')?.value">
+              <span>{{ form.get('name')?.value || 'Categoria' }}</span>
+            </div>
+            <div class="color-grid">
+              <button
+                *ngFor="let c of colors"
+                type="button"
+                class="color-swatch"
+                [class.selected]="form.get('color')?.value === c"
+                [style.background]="c"
+                (click)="selectColor(c)"
+                [attr.title]="c">
+              </button>
+            </div>
+          </div>
+        </form>
+      </mat-dialog-content>
+
+      <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancelar</button>
+        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="loading()">
+          <mat-spinner *ngIf="loading()" diameter="18"></mat-spinner>
+          <mat-icon *ngIf="!loading()">save</mat-icon>
+          {{ isEdit ? 'Atualizar' : 'Criar' }}
+        </button>
+      </mat-dialog-actions>
+    </div>

@@ -1,0 +1,21 @@
+<div class="month-selector">
+      <button mat-icon-button (click)="prev()" matTooltip="Mês anterior">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+
+      <div class="month-label">
+        <span class="month-name">{{ monthLabel() }}</span>
+        <button
+          *ngIf="!isCurrentMonth()"
+          mat-icon-button
+          class="today-btn"
+          (click)="goToToday()"
+          matTooltip="Ir para o mês atual">
+          <mat-icon>today</mat-icon>
+        </button>
+      </div>
+
+      <button mat-icon-button (click)="next()" matTooltip="Próximo mês">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>

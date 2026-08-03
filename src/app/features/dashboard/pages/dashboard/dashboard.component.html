@@ -1,0 +1,168 @@
+<div class="cm-page">
+      <!-- Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard</h1>
+          <p class="page-subtitle">Visão geral do mês</p>
+        </div>
+        <app-month-selector
+          [currentDate]="currentMonthDate()"
+          (monthChanged)="onMonthChanged($event)">
+        </app-month-selector>
+      </div>
+
+      <!-- Skeleton loading -->
+      <ng-container *ngIf="loading()">
+        <app-skeleton-loader [count]="4" height="120px" gap="16px"></app-skeleton-loader>
+        <div style="height: 16px"></div>
+        <app-skeleton-loader [count]="2" height="300px" gap="16px"></app-skeleton-loader>
+      </ng-container>
+
+      <!-- Cards de resumo -->
+      <ng-container *ngIf="!loading()">
+        <div class="summary-grid fade-up">
+
+          <div class="summary-card income">
+            <div class="card-icon">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Total de Entradas</span>
+              <span class="card-value income-value">{{ summary()?.total_income | currencyBr }}</span>
+              <span class="card-sub">{{ summary()?.total_income_count }} lançamentos</span>
+            </div>
+          </div>
+
+          <div class="summary-card expense">
+            <div class="card-icon">
+              <mat-icon>trending_down</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Total de Saídas</span>
+              <span class="card-value expense-value">{{ summary()?.total_expense | currencyBr }}</span>
+              <span class="card-sub">{{ summary()?.total_expense_count }} lançamentos</span>
+            </div>
+          </div>
+
+          <div class="summary-card balance" [class.positive]="(summary()?.balance ?? 0) >= 0" [class.negative]="(summary()?.balance ?? 0) < 0">
+            <div class="card-icon">
+              <mat-icon>account_balance_wallet</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Saldo do Mês</span>
+              <span class="card-value" [class.income-value]="(summary()?.balance ?? 0) >= 0" [class.expense-value]="(summary()?.balance ?? 0) < 0">
+                {{ summary()?.balance | currencyBr }}
+              </span>
+              <span class="card-sub">Entradas − Saídas</span>
+            </div>
+          </div>
+
+          <div class="summary-card pending">
+            <div class="card-icon">
+              <mat-icon>pending_actions</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Pendente</span>
+              <span class="card-value pending-value">{{ summary()?.total_pending | currencyBr }}</span>
+              <span class="card-sub">{{ summary()?.pending_count }} conta(s) em aberto</span>
+            </div>
+          </div>
+
+          <div class="summary-card paid">
+            <div class="card-icon">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Já Pago</span>
+              <span class="card-value paid-value">{{ summary()?.total_paid | currencyBr }}</span>
+              <span class="card-sub">de {{ summary()?.total_expense | currencyBr }}</span>
+            </div>
+          </div>
+
+          <div class="summary-card overdue" *ngIf="(summary()?.overdue_count ?? 0) > 0">
+            <div class="card-icon warn">
+              <mat-icon>warning</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Atrasado(s)</span>
+              <span class="card-value overdue-value">{{ summary()?.overdue_count }}</span>
+              <span class="card-sub overdue-sub">Requer atenção imediata</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de progresso -->
+        <div class="cm-card progress-section fade-up">
+          <div class="progress-header">
+            <span>Renda comprometida</span>
+            <span class="progress-pct" [class.danger]="commitedPct() > 80">
+              {{ commitedPct() }}%
+            </span>
+          </div>
+          <mat-progress-bar
+            mode="determinate"
+            [value]="commitedPct()"
+            [color]="commitedPct() > 80 ? 'warn' : 'primary'">
+          </mat-progress-bar>
+          <p class="progress-hint">
+            {{ summary()?.total_expense | currencyBr }} de {{ summary()?.total_income | currencyBr }} em entradas
+          </p>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="charts-grid fade-up">
+
+          <div class="cm-card chart-card">
+            <h3 class="cm-section-title">Despesas por Categoria</h3>
+            <div class="chart-wrapper" *ngIf="doughnutData().datasets[0].data.length > 0; else noDataTpl">
+              <canvas baseChart
+                [data]="doughnutData()"
+                [options]="doughnutOptions"
+                type="doughnut">
+              </canvas>
+            </div>
+          </div>
+
+          <div class="cm-card chart-card">
+            <h3 class="cm-section-title">Entradas vs Saídas</h3>
+            <div class="chart-wrapper">
+              <canvas baseChart
+                [data]="barData()"
+                [options]="barOptions"
+                type="bar">
+              </canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ações rápidas -->
+        <div class="quick-actions fade-up">
+          <h3 class="cm-section-title">Ações rápidas</h3>
+          <div class="actions-grid">
+            <a mat-stroked-button routerLink="/transactions" [queryParams]="{ new: 'income' }">
+              <mat-icon>add_circle</mat-icon>
+              Nova entrada
+            </a>
+            <a mat-stroked-button routerLink="/transactions" [queryParams]="{ new: 'expense' }">
+              <mat-icon>remove_circle</mat-icon>
+              Nova saída
+            </a>
+            <a mat-stroked-button routerLink="/transactions">
+              <mat-icon>receipt_long</mat-icon>
+              Ver movimentações
+            </a>
+            <a mat-stroked-button routerLink="/recurring">
+              <mat-icon>autorenew</mat-icon>
+              Recorrências
+            </a>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <ng-template #noDataTpl>
+      <div class="no-data-chart">
+        <mat-icon>bar_chart</mat-icon>
+        <p>Sem dados neste mês</p>
+      </div>
+    </ng-template>

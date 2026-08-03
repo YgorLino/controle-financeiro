@@ -1,0 +1,163 @@
+.page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--cm-text);
+      margin: 0;
+    }
+    .page-subtitle {
+      color: var(--cm-text-muted);
+      font-size: .875rem;
+      margin: 4px 0 0;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .summary-card {
+      background: var(--cm-surface);
+      border-radius: var(--cm-radius);
+      border: 1px solid var(--cm-border);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--cm-shadow);
+      transition: box-shadow var(--cm-transition), transform var(--cm-transition);
+
+      &:hover {
+        box-shadow: var(--cm-shadow-md);
+        transform: translateY(-1px);
+      }
+    }
+
+    .card-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+
+      mat-icon { font-size: 24px; width: 24px; height: 24px; }
+    }
+
+    .income .card-icon  { background: rgba(16,185,129,.12); color: var(--cm-income); }
+    .expense .card-icon { background: rgba(239,68,68,.12);  color: var(--cm-expense); }
+    .balance .card-icon { background: rgba(99,102,241,.12); color: var(--cm-primary); }
+    .pending .card-icon { background: rgba(245,158,11,.12); color: var(--cm-pending); }
+    .paid .card-icon    { background: rgba(16,185,129,.12); color: var(--cm-paid); }
+    .overdue .card-icon.warn { background: rgba(239,68,68,.12); color: var(--cm-overdue); }
+
+    .card-info {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .card-label {
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--cm-text-muted);
+      margin-bottom: 4px;
+    }
+
+    .card-value {
+      font-size: 1.375rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .income-value  { color: var(--cm-income); }
+    .expense-value { color: var(--cm-expense); }
+    .pending-value { color: var(--cm-pending); }
+    .paid-value    { color: var(--cm-paid); }
+    .overdue-value { color: var(--cm-overdue); font-size: 2rem; }
+
+    .card-sub {
+      font-size: .75rem;
+      color: var(--cm-text-muted);
+      margin-top: 2px;
+    }
+
+    .overdue-sub { color: var(--cm-overdue); font-weight: 500; }
+
+    .progress-section {
+      margin-bottom: 16px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: .875rem;
+      font-weight: 500;
+      color: var(--cm-text-muted);
+    }
+
+    .progress-pct {
+      font-weight: 700;
+      color: var(--cm-primary);
+      &.danger { color: var(--cm-warn); }
+    }
+
+    .progress-hint {
+      font-size: .75rem;
+      color: var(--cm-text-muted);
+      margin-top: 8px;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+
+      @media (max-width: 768px) { grid-template-columns: 1fr; }
+    }
+
+    .chart-card { padding: 24px; }
+
+    .chart-wrapper {
+      height: 260px;
+      position: relative;
+      canvas { max-height: 260px; }
+    }
+
+    .no-data-chart {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px;
+      color: var(--cm-text-muted);
+      gap: 8px;
+      mat-icon { font-size: 48px; width: 48px; height: 48px; opacity: .3; }
+    }
+
+    .quick-actions { margin-top: 8px; }
+
+    .actions-grid {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .actions-grid a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+    }

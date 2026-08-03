@@ -15,59 +15,8 @@ import { ptBR } from 'date-fns/locale';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatButtonModule, MatIconModule, MatTooltipModule],
-  template: `
-    <div class="month-selector">
-      <button mat-icon-button (click)="prev()" matTooltip="Mês anterior">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-
-      <div class="month-label">
-        <span class="month-name">{{ monthLabel() }}</span>
-        <button
-          *ngIf="!isCurrentMonth()"
-          mat-icon-button
-          class="today-btn"
-          (click)="goToToday()"
-          matTooltip="Ir para o mês atual">
-          <mat-icon>today</mat-icon>
-        </button>
-      </div>
-
-      <button mat-icon-button (click)="next()" matTooltip="Próximo mês">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
-  `,
-  styles: [`
-    .month-selector {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: var(--cm-surface);
-      border: 1px solid var(--cm-border);
-      border-radius: var(--cm-radius);
-      padding: 4px 8px;
-    }
-    .month-label {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      min-width: 160px;
-      justify-content: center;
-    }
-    .month-name {
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--cm-text);
-      letter-spacing: -.01em;
-    }
-    .today-btn {
-      width: 28px !important;
-      height: 28px !important;
-      opacity: .6;
-      mat-icon { font-size: 16px !important; }
-    }
-  `]
+  templateUrl: './month-selector.component.html',
+  styleUrl: './month-selector.component.scss'
 })
 export class MonthSelectorComponent implements OnInit {
   @Input() currentDate: Date = startOfMonth(new Date());

@@ -1,0 +1,281 @@
+<div class="cm-page">
+      <!-- Header -->
+      <div class="page-header">
+        <div class="header-left">
+          <h1 class="page-title">Movimentações</h1>
+          <p class="page-subtitle">{{ currentMonthDate() | referenceMonth }}</p>
+        </div>
+        <div class="header-actions">
+          <app-month-selector
+            [currentDate]="currentMonthDate()"
+            (monthChanged)="onMonthChanged($event)">
+          </app-month-selector>
+
+          <button mat-flat-button color="primary" (click)="openForm('income')"
+                  id="btn-nova-entrada">
+            <mat-icon>add</mat-icon>
+            Entrada
+          </button>
+          <button mat-flat-button color="warn" (click)="openForm('expense')"
+                  id="btn-nova-saida">
+            <mat-icon>remove</mat-icon>
+            Saída
+          </button>
+          <button mat-stroked-button (click)="exportCsv()" matTooltip="Exportar CSV">
+            <mat-icon>download</mat-icon>
+            CSV
+          </button>
+        </div>
+      </div>
+
+      <!-- Totais rápidos -->
+      <div class="totals-bar fade-up" *ngIf="!loading()">
+        <div class="total-item income">
+          <mat-icon>trending_up</mat-icon>
+          <span>{{ totalIncome() | currencyBr }}</span>
+          <small>Entradas</small>
+        </div>
+        <div class="total-item expense">
+          <mat-icon>trending_down</mat-icon>
+          <span>{{ totalExpense() | currencyBr }}</span>
+          <small>Saídas</small>
+        </div>
+        <div class="total-item balance" [class.negative]="balance() < 0">
+          <mat-icon>account_balance_wallet</mat-icon>
+          <span>{{ balance() | currencyBr }}</span>
+          <small>Saldo</small>
+        </div>
+        <button mat-stroked-button class="copy-btn" (click)="copyPreviousMonth()">
+          <mat-icon>content_copy</mat-icon>
+          Copiar mês anterior
+        </button>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filters-bar fade-up">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Pesquisar</mat-label>
+          <input matInput [formControl]="searchCtrl" placeholder="Buscar por descrição...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Categoria</mat-label>
+          <mat-select [formControl]="categoryCtrl">
+            <mat-option value="">Todas</mat-option>
+            <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:10px;height:10px;border-radius:50%;display:inline-block"
+                      [style.background]="cat.color"></span>
+                {{ cat.name }}
+              </div>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [formControl]="statusCtrl">
+            <mat-option value="">Todos</mat-option>
+            <mat-option value="paid">Pago / Recebido</mat-option>
+            <mat-option value="pending">Pendente</mat-option>
+            <mat-option value="overdue">Atrasado</mat-option>
+            <mat-option value="cancelled">Cancelado</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo</mat-label>
+          <mat-select [formControl]="typeCtrl">
+            <mat-option value="">Todos</mat-option>
+            <mat-option value="income">Entradas</mat-option>
+            <mat-option value="expense">Saídas</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Skeleton -->
+      <app-skeleton-loader *ngIf="loading()" [count]="5" height="60px"></app-skeleton-loader>
+
+      <!-- Tabela (desktop) -->
+      <ng-container *ngIf="!loading() && !isMobile()">
+        <div class="cm-table-container fade-up" *ngIf="filteredTransactions().length > 0">
+          <table mat-table [dataSource]="filteredTransactions()" class="transactions-table">
+
+            <!-- Descrição -->
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Descrição</th>
+              <td mat-cell *matCellDef="let t">
+                <div class="desc-cell">
+                  <span class="desc-text">{{ t.description }}</span>
+                  <span *ngIf="isTransactionOverdue(t)" class="overdue-badge">
+                    <mat-icon>warning</mat-icon> Atrasado
+                  </span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Entrada -->
+            <ng-container matColumnDef="income">
+              <th mat-header-cell *matHeaderCellDef>Entrada</th>
+              <td mat-cell *matCellDef="let t">
+                <span *ngIf="t.transaction_type === 'income'" class="amount income-amount">
+                  {{ t.amount | currencyBr }}
+                </span>
+                <span *ngIf="t.transaction_type !== 'income'" class="amount-dash">—</span>
+              </td>
+            </ng-container>
+
+            <!-- Saída -->
+            <ng-container matColumnDef="expense">
+              <th mat-header-cell *matHeaderCellDef>Saída</th>
+              <td mat-cell *matCellDef="let t">
+                <span *ngIf="t.transaction_type === 'expense'" class="amount expense-amount">
+                  {{ t.amount | currencyBr }}
+                </span>
+                <span *ngIf="t.transaction_type !== 'expense'" class="amount-dash">—</span>
+              </td>
+            </ng-container>
+
+            <!-- Categoria -->
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Categoria</th>
+              <td mat-cell *matCellDef="let t">
+                <span *ngIf="t.category" class="cat-chip"
+                      [style.background]="t.category.color + '22'"
+                      [style.color]="t.category.color">
+                  {{ t.category.name }}
+                </span>
+                <span *ngIf="!t.category" class="cat-chip no-cat">Sem categoria</span>
+              </td>
+            </ng-container>
+
+            <!-- Vencimento -->
+            <ng-container matColumnDef="due_date">
+              <th mat-header-cell *matHeaderCellDef>Vencimento</th>
+              <td mat-cell *matCellDef="let t">
+                <span [class.overdue-date]="isTransactionOverdue(t)">
+                  {{ formatDate(t.due_date) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Status -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let t">
+                <span class="chip" [ngClass]="'chip-' + (isTransactionOverdue(t) ? 'overdue' : t.status)">
+                  {{ getStatusLabel(t) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Ações -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef style="text-align:right">Ações</th>
+              <td mat-cell *matCellDef="let t" class="actions-cell">
+                <!-- Marcar pago (rápido) -->
+                <button mat-icon-button color="primary"
+                        *ngIf="t.status !== 'paid'"
+                        (click)="markAsPaid(t)"
+                        matTooltip="Marcar como pago">
+                  <mat-icon>check_circle_outline</mat-icon>
+                </button>
+                <!-- Marcar pendente -->
+                <button mat-icon-button
+                        *ngIf="t.status === 'paid'"
+                        (click)="markAsPending(t)"
+                        matTooltip="Marcar como pendente">
+                  <mat-icon>radio_button_unchecked</mat-icon>
+                </button>
+
+                <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #actionMenu="matMenu">
+                  <button mat-menu-item (click)="openForm(undefined, t)">
+                    <mat-icon>edit</mat-icon> Editar
+                  </button>
+                  <button mat-menu-item (click)="duplicate(t)">
+                    <mat-icon>content_copy</mat-icon> Duplicar
+                  </button>
+                  <mat-divider></mat-divider>
+                  <button mat-menu-item (click)="confirmDelete(t.id)" class="delete-item">
+                    <mat-icon>delete</mat-icon> Excluir
+                  </button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+                [class.overdue-row]="isTransactionOverdue(row)">
+            </tr>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <app-empty-state
+          *ngIf="!loading() && filteredTransactions().length === 0"
+          icon="receipt_long"
+          title="Nenhuma movimentação encontrada neste mês"
+          message="Comece adicionando suas entradas e saídas para este período."
+          actionLabel="Adicionar movimentação"
+          (action)="openForm()">
+        </app-empty-state>
+      </ng-container>
+
+      <!-- Cards (mobile) -->
+      <ng-container *ngIf="!loading() && isMobile()">
+        <div class="mobile-cards fade-up" *ngIf="filteredTransactions().length > 0">
+          <div *ngFor="let t of filteredTransactions()" class="transaction-card"
+               [class.overdue-row]="isTransactionOverdue(t)">
+            <div class="card-row">
+              <div class="card-left">
+                <span class="card-desc">{{ t.description }}</span>
+                <span *ngIf="t.category" class="cat-chip mini"
+                      [style.background]="t.category.color + '22'"
+                      [style.color]="t.category.color">
+                  {{ t.category.name }}
+                </span>
+              </div>
+              <div class="card-right">
+                <span class="card-amount"
+                      [class.income-amount]="t.transaction_type === 'income'"
+                      [class.expense-amount]="t.transaction_type === 'expense'">
+                  {{ t.transaction_type === 'income' ? '+' : '-' }} {{ t.amount | currencyBr }}
+                </span>
+                <span class="chip mini" [ngClass]="'chip-' + (isTransactionOverdue(t) ? 'overdue' : t.status)">
+                  {{ getStatusLabel(t) }}
+                </span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span>{{ formatDate(t.due_date) }}</span>
+              <div class="card-actions">
+                <button mat-icon-button (click)="markAsPaid(t)"
+                        *ngIf="t.status !== 'paid'" matTooltip="Pago">
+                  <mat-icon>check_circle_outline</mat-icon>
+                </button>
+                <button mat-icon-button (click)="openForm(undefined, t)" matTooltip="Editar">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="confirmDelete(t.id)" matTooltip="Excluir">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <app-empty-state
+          *ngIf="filteredTransactions().length === 0"
+          icon="receipt_long"
+          title="Nenhuma movimentação"
+          message="Adicione entradas e saídas para este mês."
+          actionLabel="Adicionar"
+          (action)="openForm()">
+        </app-empty-state>
+      </ng-container>
+    </div>

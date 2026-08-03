@@ -1,0 +1,8 @@
+.confirm-dialog { min-width: 300px; padding: 8px; }
+    .dialog-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.125rem; font-weight: 600; margin-bottom: 4px;
+    }
+    .warn-icon { color: var(--cm-warn); }
+    p { color: var(--cm-text-muted); line-height: 1.6; }
+    mat-dialog-actions { margin-top: 8px; gap: 8px; }

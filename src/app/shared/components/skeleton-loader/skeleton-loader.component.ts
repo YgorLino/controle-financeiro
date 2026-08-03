@@ -7,20 +7,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule],
-  template: `
-    <div class="skeleton-wrapper">
-      <div
-        *ngFor="let i of items"
-        class="skeleton"
-        [style.width]="width"
-        [style.height]="height"
-        [style.margin-bottom]="gap">
-      </div>
-    </div>
-  `,
-  styles: [`
-    .skeleton-wrapper { width: 100%; }
-  `]
+  templateUrl: './skeleton-loader.component.html',
+  styleUrl: './skeleton-loader.component.scss'
 })
 export class SkeletonLoaderComponent {
   @Input() count: number = 3;

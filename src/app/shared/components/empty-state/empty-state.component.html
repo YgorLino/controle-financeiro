@@ -1,0 +1,14 @@
+<div class="empty-state fade-up">
+      <div class="empty-icon">
+        <mat-icon>{{ icon }}</mat-icon>
+      </div>
+      <h3>{{ title }}</h3>
+      <p>{{ message }}</p>
+      <button
+        *ngIf="actionLabel"
+        mat-flat-button color="primary"
+        (click)="onAction()">
+        <mat-icon>add</mat-icon>
+        {{ actionLabel }}
+      </button>
+    </div>

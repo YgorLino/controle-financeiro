@@ -30,82 +30,8 @@ const PRESET_COLORS = [
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatButtonModule, MatIconModule, MatProgressSpinnerModule
   ],
-  template: `
-    <div class="form-dialog">
-      <h2 mat-dialog-title class="dialog-title">
-        <mat-icon>category</mat-icon>
-        {{ isEdit ? 'Editar categoria' : 'Nova categoria' }}
-      </h2>
-
-      <mat-dialog-content class="dialog-content">
-        <form [formGroup]="form" id="category-form">
-          <mat-form-field appearance="outline">
-            <mat-label>Nome *</mat-label>
-            <input matInput formControlName="name" placeholder="Ex: Alimentação, Salário...">
-            <mat-error *ngIf="form.get('name')?.hasError('required')">Informe o nome da categoria.</mat-error>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Tipo *</mat-label>
-            <mat-select formControlName="transaction_type">
-              <mat-option value="income">Entrada</mat-option>
-              <mat-option value="expense">Saída</mat-option>
-              <mat-option value="both">Ambos</mat-option>
-            </mat-select>
-            <mat-error>Selecione o tipo.</mat-error>
-          </mat-form-field>
-
-          <!-- Color picker -->
-          <div class="color-section">
-            <label class="color-label">Cor da categoria</label>
-            <div class="color-preview" [style.background]="form.get('color')?.value">
-              <span>{{ form.get('name')?.value || 'Categoria' }}</span>
-            </div>
-            <div class="color-grid">
-              <button
-                *ngFor="let c of colors"
-                type="button"
-                class="color-swatch"
-                [class.selected]="form.get('color')?.value === c"
-                [style.background]="c"
-                (click)="selectColor(c)"
-                [attr.title]="c">
-              </button>
-            </div>
-          </div>
-        </form>
-      </mat-dialog-content>
-
-      <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancelar</button>
-        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="loading()">
-          <mat-spinner *ngIf="loading()" diameter="18"></mat-spinner>
-          <mat-icon *ngIf="!loading()">save</mat-icon>
-          {{ isEdit ? 'Atualizar' : 'Criar' }}
-        </button>
-      </mat-dialog-actions>
-    </div>
-  `,
-  styles: [`
-    .form-dialog { width: 100%; }
-    .dialog-title {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 1.125rem; font-weight: 600; margin-bottom: 0;
-    }
-    .dialog-content { min-width: min(420px, 90vw); padding-top: 16px !important; }
-    .color-section { margin-top: 8px; }
-    .color-label { font-size: .875rem; color: var(--cm-text-muted); margin-bottom: 8px; display: block; }
-    .color-preview {
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 12px;
-      display: inline-flex;
-      align-items: center;
-      span { color: white; font-weight: 600; font-size: .875rem; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
-    }
-    mat-dialog-actions { gap: 8px; padding-top: 8px; }
-    mat-dialog-actions button { display: flex; align-items: center; gap: 6px; }
-  `]
+  templateUrl: './category-form.component.html',
+  styleUrl: './category-form.component.scss'
 })
 export class CategoryFormComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<CategoryFormComponent>);
