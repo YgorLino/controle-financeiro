@@ -1,1 +1,192 @@
-/* You can add global styles to this file, and also import other style files */
+// src/styles.scss
+// Estilos globais do Controle Maguinho
+
+@use '@angular/material' as mat;
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import './styles/variables';
+
+// ── Reset e Base ────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--cm-bg);
+  color: var(--cm-text);
+  line-height: 1.5;
+  transition: background-color var(--cm-transition), color var(--cm-transition);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: var(--cm-primary); text-decoration: none; }
+
+// ── Scrollbar ─────────────────────────────────────────────────────────
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--cm-surface-2); }
+::-webkit-scrollbar-thumb {
+  background: var(--cm-border);
+  border-radius: 99px;
+  &:hover { background: var(--cm-text-muted); }
+}
+
+// ── Layout ───────────────────────────────────────────────────────────
+.cm-page {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (max-width: 600px) { padding: 16px; }
+}
+
+.cm-card {
+  background: var(--cm-surface);
+  border-radius: var(--cm-radius);
+  box-shadow: var(--cm-shadow);
+  padding: 20px;
+  transition: box-shadow var(--cm-transition);
+  border: 1px solid var(--cm-border);
+
+  &:hover { box-shadow: var(--cm-shadow-md); }
+}
+
+.cm-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--cm-text);
+  margin-bottom: 16px;
+}
+
+// ── Chips de status ────────────────────────────────────────────────────
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: 1.4;
+
+  &.chip-paid      { background: rgba(16,185,129,.15);  color: var(--cm-paid); }
+  &.chip-pending   { background: rgba(245,158,11,.15);  color: var(--cm-pending); }
+  &.chip-overdue   { background: rgba(239,68,68,.15);   color: var(--cm-overdue); }
+  &.chip-cancelled { background: rgba(148,163,184,.15); color: var(--cm-cancelled); }
+  &.chip-income    { background: rgba(16,185,129,.12);  color: var(--cm-income); }
+  &.chip-expense   { background: rgba(239,68,68,.12);   color: var(--cm-expense); }
+}
+
+// ── Snackbars ──────────────────────────────────────────────────────────
+.snack-success .mdc-snackbar__surface {
+  background: #10b981 !important;
+  color: white !important;
+}
+.snack-error .mdc-snackbar__surface {
+  background: #ef4444 !important;
+  color: white !important;
+}
+.snack-info .mdc-snackbar__surface {
+  background: #6366f1 !important;
+  color: white !important;
+}
+
+// ── Table ──────────────────────────────────────────────────────────────
+.cm-table-container {
+  overflow-x: auto;
+  border-radius: var(--cm-radius);
+  border: 1px solid var(--cm-border);
+
+  table { width: 100%; background: var(--cm-surface); }
+
+  .mat-mdc-row:hover { background: var(--cm-surface-2) !important; }
+  .mat-mdc-row.overdue-row { background: rgba(239,68,68,.04) !important; }
+  .mat-mdc-header-row { background: var(--cm-surface-2); }
+  .mat-mdc-header-cell {
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--cm-text-muted);
+  }
+}
+
+// ── Formulários ────────────────────────────────────────────────────────
+.cm-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.cm-full-width { width: 100%; }
+
+// ── Skeleton ───────────────────────────────────────────────────────────
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--cm-border) 25%,
+    var(--cm-surface-2) 50%,
+    var(--cm-border) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite;
+  border-radius: var(--cm-radius-sm);
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// ── Animações ──────────────────────────────────────────────────────────
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fade-up 300ms ease-out; }
+
+// ── Sobrescritas Angular Material ──────────────────────────────────────
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background: var(--cm-surface) !important;
+  border-radius: var(--cm-radius-lg) !important;
+}
+
+.mat-mdc-form-field { width: 100%; }
+
+.mat-mdc-menu-panel {
+  background: var(--cm-surface) !important;
+  border: 1px solid var(--cm-border) !important;
+  border-radius: var(--cm-radius) !important;
+}
+
+// Sidenav container full height
+mat-sidenav-container {
+  height: 100vh;
+}
+
+// Color inputs
+.color-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform var(--cm-transition), border-color var(--cm-transition);
+
+  &:hover { transform: scale(1.15); }
+  &.selected { border-color: var(--cm-text); transform: scale(1.15); }
+}

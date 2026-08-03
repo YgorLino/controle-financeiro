@@ -1,0 +1,136 @@
+// src/app/layout/auth-layout/auth-layout.component.ts
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-auth-layout',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterOutlet],
+  template: `
+    <div class="auth-layout">
+      <div class="auth-brand">
+        <div class="brand-content">
+          <div class="brand-logo">
+            <span class="brand-icon">💰</span>
+          </div>
+          <h1>Controle Maguinho</h1>
+          <p>Organize suas finanças pessoais de forma simples e eficiente.</p>
+          <div class="brand-features">
+            <div class="feature-item">
+              <span class="feature-icon">📊</span>
+              <span>Dashboard com visão completa do mês</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🔄</span>
+              <span>Lançamentos recorrentes automáticos</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🔒</span>
+              <span>Seus dados são exclusivamente seus</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">📱</span>
+              <span>Funciona no celular e no computador</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="auth-form-area">
+        <router-outlet />
+      </div>
+    </div>
+  `,
+  styles: [`
+    .auth-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .auth-brand {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #2563eb 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+      }
+
+      @media (max-width: 768px) { display: none; }
+    }
+
+    .brand-content {
+      position: relative;
+      z-index: 1;
+      color: white;
+      max-width: 400px;
+    }
+
+    .brand-logo {
+      width: 72px; height: 72px;
+      background: rgba(255,255,255,.15);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -.02em;
+    }
+
+    p {
+      font-size: 1.0625rem;
+      opacity: .85;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .brand-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: .9375rem;
+      opacity: .9;
+    }
+
+    .feature-icon {
+      font-size: 1.25rem;
+      width: 32px;
+      text-align: center;
+    }
+
+    .auth-form-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      background: var(--cm-bg);
+      overflow-y: auto;
+    }
+  `]
+})
+export class AuthLayoutComponent {}
