@@ -20,7 +20,6 @@ export interface Transaction {
   updated_at: string;
   // Join
   category?: import('./category.model').Category | null;
-  account?: import('./account.model').Account | null;
 }
 
 export interface TransactionFormData {
