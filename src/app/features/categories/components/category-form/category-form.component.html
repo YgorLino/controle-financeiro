@@ -1,10 +1,15 @@
 <div class="form-dialog">
-      <h2 mat-dialog-title class="dialog-title">
-        <mat-icon>category</mat-icon>
-        {{ isEdit ? 'Editar categoria' : 'Nova categoria' }}
-      </h2>
+  <div class="dialog-header">
+    <div class="header-title">
+      <mat-icon>category</mat-icon>
+      <h2>{{ isEdit ? 'Editar categoria' : 'Nova categoria' }}</h2>
+    </div>
+    <button mat-icon-button class="close-btn" mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-      <mat-dialog-content class="dialog-content">
+  <mat-dialog-content class="dialog-content">
         <form [formGroup]="form" id="category-form">
           <mat-form-field appearance="outline">
             <mat-label>Nome *</mat-label>
@@ -60,7 +65,7 @@
         </form>
       </mat-dialog-content>
 
-      <mat-dialog-actions align="end">
+      <mat-dialog-actions align="end" class="dialog-actions">
         <button mat-button mat-dialog-close>Cancelar</button>
         <button mat-flat-button color="primary" (click)="onSave()" [disabled]="loading()">
           <mat-spinner *ngIf="loading()" diameter="18"></mat-spinner>

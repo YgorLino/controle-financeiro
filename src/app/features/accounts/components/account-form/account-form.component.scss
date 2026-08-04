@@ -1,0 +1,49 @@
+.form-dialog { width: 100%; display: flex; flex-direction: column; }
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: var(--cm-surface-2);
+  border-bottom: 1px solid var(--cm-border);
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--cm-text);
+  
+  h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+  }
+  mat-icon {
+    color: var(--cm-primary);
+  }
+}
+
+.close-btn {
+  color: var(--cm-text-muted);
+  &:hover { color: var(--cm-warn); }
+}
+
+.dialog-content { 
+  min-width: min(420px, 90vw); 
+  padding: 24px !important; 
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dialog-actions {
+  padding: 0 24px 24px;
+  margin: 0;
+  gap: 8px;
+}
+.dialog-actions button { display: flex; align-items: center; gap: 6px; }
+
+.color-section { margin-top: 8px; }
+.color-label { font-size: .875rem; color: var(--cm-text-muted); margin-bottom: 8px; display: block; }

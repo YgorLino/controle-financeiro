@@ -1,10 +1,15 @@
 <div class="form-dialog">
-      <h2 mat-dialog-title class="dialog-title">
-        <mat-icon>{{ isEdit ? 'edit' : 'add_circle' }}</mat-icon>
-        {{ isEdit ? 'Editar movimentação' : 'Nova movimentação' }}
-      </h2>
+  <div class="dialog-header">
+    <div class="header-title">
+      <mat-icon>{{ isEdit ? 'edit' : 'add_circle' }}</mat-icon>
+      <h2>{{ isEdit ? 'Editar movimentação' : 'Nova movimentação' }}</h2>
+    </div>
+    <button mat-icon-button class="close-btn" mat-dialog-close tabindex="-1">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-      <mat-dialog-content class="dialog-content">
+  <mat-dialog-content class="dialog-content">
         <form [formGroup]="form" (ngSubmit)="onSave()" id="transaction-form">
 
           <!-- Tipo -->
@@ -123,10 +128,10 @@
             </mat-form-field>
           </div>
 
-          <div class="cm-form-row" *ngIf="showPaymentDate()">
-            <!-- Conta de Origem/Destino -->
+          <div class="cm-form-row">
+            <!-- Conta de Origem/Destino (Sempre visível, mas com dica visual) -->
             <mat-form-field appearance="outline" class="cm-full-width">
-              <mat-label>Conta (Origem / Destino) *</mat-label>
+              <mat-label>Conta (Origem / Destino) {{ showPaymentDate() ? '*' : '(Opcional)' }}</mat-label>
               <mat-select formControlName="account_id">
                 <mat-option *ngFor="let acc of accounts()" [value]="acc.id">
                   <div style="display:flex;align-items:center;gap:8px">
@@ -135,6 +140,7 @@
                   </div>
                 </mat-option>
               </mat-select>
+              <mat-hint *ngIf="!showPaymentDate()">Selecione apenas se quiser agendar a conta.</mat-hint>
               <mat-error>Selecione a conta de onde o dinheiro saiu/entrou.</mat-error>
             </mat-form-field>
           </div>

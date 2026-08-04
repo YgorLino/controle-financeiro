@@ -1,0 +1,65 @@
+<div class="cm-page">
+  <div class="header-actions fade-up">
+    <div>
+      <h1 class="page-title">Minhas Contas</h1>
+      <p class="page-subtitle">Gerencie de onde sai e pra onde vai o seu dinheiro.</p>
+    </div>
+    <button mat-flat-button color="primary" (click)="openAccountForm()">
+      <mat-icon>add</mat-icon>
+      Nova conta
+    </button>
+  </div>
+
+  <div class="balance-card fade-up">
+    <div class="balance-icon">
+      <mat-icon>account_balance</mat-icon>
+    </div>
+    <div class="balance-info">
+      <span>Saldo Total (Inicial)</span>
+      <h2>{{ totalBalance() | currency:'BRL' }}</h2>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading()">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Carregando contas...</p>
+  </div>
+
+  <div class="accounts-grid" *ngIf="!loading()">
+    <div class="account-card fade-up" *ngFor="let acc of accounts()">
+      <div class="acc-header">
+        <div class="acc-title">
+          <div class="acc-icon" [style.background]="acc.color">
+            <mat-icon>account_balance_wallet</mat-icon>
+          </div>
+          <h3>{{ acc.name }}</h3>
+        </div>
+        <button mat-icon-button [matMenuTriggerFor]="menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="openAccountForm(acc)">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button mat-menu-item (click)="deleteAccount(acc.id)" class="text-danger">
+            <mat-icon color="warn">delete</mat-icon>
+            <span>Excluir</span>
+          </button>
+        </mat-menu>
+      </div>
+      
+      <div class="acc-balance">
+        <span>Saldo Inicial</span>
+        <strong>{{ acc.initial_balance | currency:'BRL' }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state fade-up" *ngIf="!loading() && accounts().length === 0">
+    <mat-icon>account_balance_wallet</mat-icon>
+    <h3>Nenhuma conta encontrada</h3>
+    <p>Comece adicionando onde você guarda seu dinheiro.</p>
+    <button mat-stroked-button (click)="openAccountForm()">Criar primeira conta</button>
+  </div>
+</div>

@@ -22,6 +22,17 @@
       <ng-container *ngIf="!loading()">
         <div class="summary-grid fade-up">
 
+          <div class="summary-card balance total-wealth">
+            <div class="card-icon" style="background: rgba(99,102,241, 0.1); color: var(--cm-primary)">
+              <mat-icon>savings</mat-icon>
+            </div>
+            <div class="card-info">
+              <span class="card-label">Saldo em Contas</span>
+              <span class="card-value income-value">{{ totalAccountBalance() | currencyBr }}</span>
+              <span class="card-sub" style="color: var(--cm-primary); font-weight: 500; cursor: pointer" routerLink="/accounts">Ver contas</span>
+            </div>
+          </div>
+
           <div class="summary-card income">
             <div class="card-icon">
               <mat-icon>trending_up</mat-icon>

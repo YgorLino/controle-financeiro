@@ -1,17 +1,37 @@
-.form-dialog { width: 100%; }
+.form-dialog { width: 100%; display: flex; flex-direction: column; }
 
-    .dialog-title {
+    .dialog-header {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 1.125rem;
-      font-weight: 600;
+      justify-content: space-between;
+      padding: 16px 24px;
+      background: var(--cm-surface-2);
+      border-bottom: 1px solid var(--cm-border);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       color: var(--cm-text);
-      padding-bottom: 8px;
+      
+      h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0;
+      }
+      mat-icon {
+        color: var(--cm-primary);
+      }
+    }
+
+    .close-btn {
+      color: var(--cm-text-muted);
+      &:hover { color: var(--cm-warn); }
     }
 
     .dialog-content {
-      padding: 16px 0 8px !important;
+      padding: 24px !important;
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -20,7 +40,8 @@
     }
 
     .dialog-actions {
-      padding-top: 8px;
+      padding: 0 24px 24px;
+      margin: 0;
       gap: 8px;
     }
 

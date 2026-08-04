@@ -20,6 +20,7 @@ import {
 } from 'chart.js';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { CategoryService } from '../../../../core/services/category.service';
+import { AccountService } from '../../../../core/services/account.service';
 import { DashboardSummary, Transaction } from '../../../../core/models/transaction.model';
 import { MonthSelectorComponent } from '../../../../shared/components/month-selector/month-selector.component';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
@@ -51,10 +52,15 @@ Chart.register(
 export class DashboardComponent implements OnInit {
   private readonly transactionService = inject(TransactionService);
   private readonly categoryService = inject(CategoryService);
+  private readonly accountService = inject(AccountService);
 
   readonly loading = signal(true);
   readonly summary = signal<DashboardSummary | null>(null);
   readonly currentMonthDate = signal(startOfMonth(new Date()));
+
+  readonly totalAccountBalance = computed(() => {
+    return this.accountService.accounts().reduce((acc, curr) => acc + curr.initial_balance, 0);
+  });
 
   readonly commitedPct = computed(() => {
     const s = this.summary();
@@ -167,7 +173,8 @@ export class DashboardComponent implements OnInit {
       const monthStr = this.transactionService.getReferenceMonthString(this.currentMonthDate());
       await Promise.all([
         this.transactionService.loadTransactions(monthStr),
-        this.categoryService.loadCategories()
+        this.categoryService.loadCategories(),
+        this.accountService.loadAccounts()
       ]);
       const s = await this.transactionService.getDashboardSummary(monthStr);
       this.summary.set(s);
