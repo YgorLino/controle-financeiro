@@ -16,3 +16,29 @@
     }
     mat-dialog-actions { gap: 8px; padding-top: 8px; }
     mat-dialog-actions button { display: flex; align-items: center; gap: 6px; }
+
+    .icon-section { margin-top: 16px; }
+    .icon-label { font-size: .875rem; color: var(--cm-text-muted); margin-bottom: 8px; display: block; }
+    .icon-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 4px 0;
+    }
+    .icon-swatch {
+      width: 40px; height: 40px;
+      border-radius: var(--cm-radius-sm);
+      border: 1px solid var(--cm-border);
+      background: var(--cm-surface-2);
+      color: var(--cm-text-muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: all var(--cm-transition);
+
+      &:hover { border-color: var(--cm-primary); color: var(--cm-text); }
+      &.selected {
+        background: var(--cm-primary-light);
+        border-color: var(--cm-primary);
+        color: var(--cm-primary);
+      }
+    }

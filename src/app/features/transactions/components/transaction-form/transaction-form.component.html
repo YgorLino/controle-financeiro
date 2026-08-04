@@ -45,9 +45,9 @@
               <mat-label>Categoria *</mat-label>
               <mat-select formControlName="category_id">
                 <mat-option *ngFor="let cat of availableCategories()" [value]="cat.id">
-                  <div class="cat-option">
-                    <span class="cat-dot" [style.background]="cat.color"></span>
-                    {{ cat.name }}
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
+                    <span>{{ cat.name }}</span>
                   </div>
                 </mat-option>
               </mat-select>

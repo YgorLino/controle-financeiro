@@ -65,8 +65,8 @@
               <mat-icon>event</mat-icon>
               <span>Vencimento: dia {{ r.due_day }}</span>
             </div>
-            <div class="detail-item" *ngIf="r.category">
-              <span class="cat-dot" [style.background]="$any(r.category)?.color"></span>
+            <div class="detail-item" *ngIf="r.category" style="display:flex;align-items:center;gap:4px">
+              <mat-icon [style.color]="$any(r.category)?.color" style="font-size: 16px; width: 16px; height: 16px;">{{ $any(r.category)?.icon || 'category' }}</mat-icon>
               <span>{{ $any(r.category)?.name }}</span>
             </div>
             <div class="detail-item">
@@ -166,8 +166,7 @@
                 <mat-option value="">Sem categoria</mat-option>
                 <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
                   <div style="display:flex;align-items:center;gap:8px">
-                    <span style="width:10px;height:10px;border-radius:50%;display:inline-block"
-                          [style.background]="cat.color"></span>
+                    <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
                     {{ cat.name }}
                   </div>
                 </mat-option>

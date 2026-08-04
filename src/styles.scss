@@ -190,3 +190,14 @@ mat-sidenav-container {
   &:hover { transform: scale(1.15); }
   &.selected { border-color: var(--cm-text); transform: scale(1.15); }
 }
+
+// Correções de contraste para botões no tema escuro (usando prebuilt light theme)
+.dark-theme {
+  .mat-mdc-button, .mat-mdc-outlined-button, .mat-mdc-icon-button {
+    color: var(--cm-text) !important;
+  }
+  .mat-mdc-stroked-button {
+    color: var(--cm-text) !important;
+    border-color: var(--cm-border) !important;
+  }
+}

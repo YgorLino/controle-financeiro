@@ -26,6 +26,7 @@
           <div class="color-section">
             <label class="color-label">Cor da categoria</label>
             <div class="color-preview" [style.background]="form.get('color')?.value">
+              <mat-icon style="color: white; margin-right: 4px;">{{ form.get('icon')?.value }}</mat-icon>
               <span>{{ form.get('name')?.value || 'Categoria' }}</span>
             </div>
             <div class="color-grid">
@@ -37,6 +38,22 @@
                 [style.background]="c"
                 (click)="selectColor(c)"
                 [attr.title]="c">
+              </button>
+            </div>
+          </div>
+
+          <!-- Icon picker -->
+          <div class="icon-section">
+            <label class="icon-label">Ícone</label>
+            <div class="icon-grid">
+              <button
+                *ngFor="let i of icons"
+                type="button"
+                class="icon-swatch"
+                [class.selected]="form.get('icon')?.value === i"
+                (click)="selectIcon(i)"
+                [attr.title]="i">
+                <mat-icon>{{ i }}</mat-icon>
               </button>
             </div>
           </div>

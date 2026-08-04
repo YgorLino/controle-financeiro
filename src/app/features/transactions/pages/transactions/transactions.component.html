@@ -65,8 +65,7 @@
             <mat-option value="">Todas</mat-option>
             <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
               <div style="display:flex;align-items:center;gap:8px">
-                <span style="width:10px;height:10px;border-radius:50%;display:inline-block"
-                      [style.background]="cat.color"></span>
+                <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
                 {{ cat.name }}
               </div>
             </mat-option>
@@ -143,7 +142,8 @@
               <td mat-cell *matCellDef="let t">
                 <span *ngIf="t.category" class="cat-chip"
                       [style.background]="t.category.color + '22'"
-                      [style.color]="t.category.color">
+                      [style.color]="t.category.color" style="display:inline-flex;align-items:center;gap:4px">
+                  <mat-icon style="font-size: 16px; width: 16px; height: 16px;">{{ t.category.icon || 'category' }}</mat-icon>
                   {{ t.category.name }}
                 </span>
                 <span *ngIf="!t.category" class="cat-chip no-cat">Sem categoria</span>
@@ -179,14 +179,14 @@
                         *ngIf="t.status !== 'paid'"
                         (click)="markAsPaid(t)"
                         matTooltip="Marcar como pago">
-                  <mat-icon>check_circle_outline</mat-icon>
+                  <mat-icon>radio_button_unchecked</mat-icon>
                 </button>
                 <!-- Marcar pendente -->
-                <button mat-icon-button
+                <button mat-icon-button color="primary"
                         *ngIf="t.status === 'paid'"
                         (click)="markAsPending(t)"
                         matTooltip="Marcar como pendente">
-                  <mat-icon>radio_button_unchecked</mat-icon>
+                  <mat-icon>check_circle</mat-icon>
                 </button>
 
                 <button mat-icon-button [matMenuTriggerFor]="actionMenu">
@@ -236,7 +236,8 @@
                 <span class="card-desc">{{ t.description }}</span>
                 <span *ngIf="t.category" class="cat-chip mini"
                       [style.background]="t.category.color + '22'"
-                      [style.color]="t.category.color">
+                      [style.color]="t.category.color" style="display:inline-flex;align-items:center;gap:4px">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">{{ t.category.icon || 'category' }}</mat-icon>
                   {{ t.category.name }}
                 </span>
               </div>
@@ -255,8 +256,12 @@
               <span>{{ formatDate(t.due_date) }}</span>
               <div class="card-actions">
                 <button mat-icon-button (click)="markAsPaid(t)"
-                        *ngIf="t.status !== 'paid'" matTooltip="Pago">
-                  <mat-icon>check_circle_outline</mat-icon>
+                        *ngIf="t.status !== 'paid'" matTooltip="Marcar como pago">
+                  <mat-icon>radio_button_unchecked</mat-icon>
+                </button>
+                <button mat-icon-button color="primary" (click)="markAsPending(t)"
+                        *ngIf="t.status === 'paid'" matTooltip="Marcar como pendente">
+                  <mat-icon>check_circle</mat-icon>
                 </button>
                 <button mat-icon-button (click)="openForm(undefined, t)" matTooltip="Editar">
                   <mat-icon>edit</mat-icon>

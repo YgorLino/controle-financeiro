@@ -32,7 +32,7 @@
           <div class="cat-content">
             <div class="cat-header">
               <div class="cat-avatar" [style.background]="cat.color + '22'" [style.color]="cat.color">
-                {{ cat.name.charAt(0).toUpperCase() }}
+                <mat-icon style="font-size: 24px; width: 24px; height: 24px;">{{ cat.icon || 'category' }}</mat-icon>
               </div>
               <div class="cat-info">
                 <span class="cat-name">{{ cat.name }}</span>

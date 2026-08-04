@@ -6,6 +6,7 @@ export interface Category {
   user_id: string;
   name: string;
   color: string;
+  icon: string;
   transaction_type: CategoryTransactionType;
   is_default: boolean;
   created_at: string;
@@ -15,5 +16,6 @@ export interface Category {
 export interface CategoryFormData {
   name: string;
   color: string;
+  icon: string;
   transaction_type: CategoryTransactionType;
 }

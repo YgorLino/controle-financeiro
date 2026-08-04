@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
       useValue: {
         duration: 4000,
-        horizontalPosition: 'right',
+        horizontalPosition: 'center',
         verticalPosition: 'top'
       }
     }

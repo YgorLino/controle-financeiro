@@ -21,6 +21,12 @@ const PRESET_COLORS = [
   '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#64748b', '#94a3b8'
 ];
 
+const PRESET_ICONS = [
+  'attach_money', 'restaurant', 'home', 'directions_car', 'local_hospital',
+  'sports_esports', 'shopping_cart', 'school', 'pets', 'flight',
+  'work', 'fitness_center', 'directions_bus', 'movie', 'local_cafe', 'category'
+];
+
 @Component({
   selector: 'app-category-form',
   standalone: true,
@@ -42,13 +48,15 @@ export class CategoryFormComponent implements OnInit {
   readonly data: { category?: Category } = inject(MAT_DIALOG_DATA) ?? {};
   readonly loading = signal(false);
   readonly colors = PRESET_COLORS;
+  readonly icons = PRESET_ICONS;
 
   get isEdit(): boolean { return !!this.data.category; }
 
   readonly form = this.fb.group({
     name: ['', [Validators.required]],
     transaction_type: ['expense', Validators.required],
-    color: [PRESET_COLORS[0], Validators.required]
+    color: [PRESET_COLORS[0], Validators.required],
+    icon: [PRESET_ICONS[0], Validators.required]
   });
 
   ngOnInit(): void {
@@ -56,13 +64,18 @@ export class CategoryFormComponent implements OnInit {
       this.form.patchValue({
         name: this.data.category.name,
         transaction_type: this.data.category.transaction_type,
-        color: this.data.category.color
+        color: this.data.category.color,
+        icon: this.data.category.icon
       });
     }
   }
 
   selectColor(color: string): void {
     this.form.patchValue({ color });
+  }
+
+  selectIcon(icon: string): void {
+    this.form.patchValue({ icon });
   }
 
   async onSave(): Promise<void> {
