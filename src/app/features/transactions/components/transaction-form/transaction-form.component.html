@@ -126,24 +126,7 @@
               <mat-datepicker-toggle matIconSuffix [for]="payPicker"></mat-datepicker-toggle>
               <mat-datepicker #payPicker></mat-datepicker>
             </mat-form-field>
-          </div>
 
-          <div class="cm-form-row">
-            <!-- Conta de Origem/Destino (Sempre visível, mas com dica visual) -->
-            <mat-form-field appearance="outline" class="cm-full-width">
-              <mat-label>Conta (Origem / Destino) {{ showPaymentDate() ? '*' : '(Opcional)' }}</mat-label>
-              <mat-select formControlName="account_id">
-                <mat-option *ngFor="let acc of accounts()" [value]="acc.id">
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <mat-icon [style.color]="acc.color" style="font-size: 18px; width: 18px; height: 18px;">account_balance_wallet</mat-icon>
-                    <span>{{ acc.name }}</span>
-                  </div>
-                </mat-option>
-              </mat-select>
-              <mat-hint *ngIf="!showPaymentDate()">Selecione apenas se quiser agendar a conta.</mat-hint>
-              <mat-error>Selecione a conta de onde o dinheiro saiu/entrou.</mat-error>
-            </mat-form-field>
-          </div>
 
           <!-- Observação -->
           <mat-form-field appearance="outline">

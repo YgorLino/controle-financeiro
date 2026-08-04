@@ -58,11 +58,6 @@ export const routes: Routes = [
           .then(m => m.CategoriesComponent)
       },
       {
-        path: 'accounts',
-        loadComponent: () => import('./features/accounts/pages/account-list/account-list.component')
-          .then(m => m.AccountListComponent)
-      },
-      {
         path: 'recurring',
         loadComponent: () => import('./features/recurring-transactions/pages/recurring-transactions.component')
           .then(m => m.RecurringTransactionsComponent)

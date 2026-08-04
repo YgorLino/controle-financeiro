@@ -43,7 +43,6 @@ export class MainLayoutComponent {
   readonly navItems: NavItem[] = [
     { path: '/dashboard',    label: 'Dashboard',     icon: 'dashboard' },
     { path: '/transactions', label: 'Movimentações', icon: 'receipt_long' },
-    { path: '/accounts',     label: 'Contas',        icon: 'account_balance_wallet' },
     { path: '/categories',   label: 'Categorias',    icon: 'category' },
     { path: '/recurring',    label: 'Recorrências',  icon: 'autorenew' },
     { path: '/settings',     label: 'Configurações', icon: 'settings' }
