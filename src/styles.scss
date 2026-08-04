@@ -90,6 +90,11 @@ a { color: var(--cm-primary); text-decoration: none; }
   background: #ef4444 !important;
   color: white !important;
 }
+.snack-error .mat-mdc-snack-bar-action,
+.snack-error .mdc-button__label {
+  color: white !important;
+  font-weight: 700;
+}
 .snack-info .mdc-snackbar__surface {
   background: #6366f1 !important;
   color: white !important;
