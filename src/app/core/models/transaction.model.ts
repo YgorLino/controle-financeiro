@@ -33,7 +33,7 @@ export interface TransactionFormData {
   status: TransactionStatus;
   payment_date: string | null;
   notes: string | null;
-  account_id: string | null;
+  account_id?: string | null;
   is_recurring: boolean;
 }
 

@@ -23,7 +23,7 @@ export class ThemeService {
   }
 
   private getSavedTheme(): Theme {
-    return (localStorage.getItem('cm-theme') as Theme) ?? 'light';
+    return (localStorage.getItem('cm-theme') as Theme) ?? 'dark';
   }
 
   private applyTheme(theme: Theme): void {
