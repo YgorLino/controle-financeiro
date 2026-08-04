@@ -18,9 +18,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { CategoryService } from '../../../../core/services/category.service';
+import { AccountService } from '../../../../core/services/account.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Transaction, TransactionStatus, TransactionType } from '../../../../core/models/transaction.model';
 import { Category } from '../../../../core/models/category.model';
+import { Account } from '../../../../core/models/account.model';
 import { format, startOfMonth } from 'date-fns';
 
 export interface TransactionFormDialogData {
@@ -47,6 +49,7 @@ export class TransactionFormComponent implements OnInit {
   private readonly dialogRef = inject(MatDialogRef<TransactionFormComponent>);
   private readonly transactionService = inject(TransactionService);
   private readonly categoryService = inject(CategoryService);
+  private readonly accountService = inject(AccountService);
   private readonly notify = inject(NotificationService);
   private readonly fb = inject(FormBuilder);
 
@@ -55,6 +58,7 @@ export class TransactionFormComponent implements OnInit {
   readonly loading = signal(false);
   readonly showPaymentDate = signal(false);
   readonly availableCategories = signal<Category[]>([]);
+  readonly accounts = this.accountService.accounts;
 
   get isEdit(): boolean {
     return !!this.data.transaction;
@@ -65,6 +69,7 @@ export class TransactionFormComponent implements OnInit {
     description: ['', [Validators.required, Validators.minLength(1)]],
     amount: [null as number | null, [Validators.required, Validators.min(0.01)]],
     category_id: [null as string | null, Validators.required],
+    account_id: [null as string | null],
     reference_month_date: [null as Date | null, Validators.required],
     due_date_obj: [null as Date | null],
     status: ['pending' as TransactionStatus, Validators.required],
@@ -73,7 +78,10 @@ export class TransactionFormComponent implements OnInit {
   });
 
   async ngOnInit(): Promise<void> {
-    await this.categoryService.loadCategories();
+    await Promise.all([
+      this.categoryService.loadCategories(),
+      this.accountService.loadAccounts()
+    ]);
     this.updateAvailableCategories();
 
     if (this.data.transaction) {
@@ -87,7 +95,8 @@ export class TransactionFormComponent implements OnInit {
         due_date_obj: t.due_date ? new Date(t.due_date + 'T12:00:00') : null,
         status: t.status,
         payment_date_obj: t.payment_date ? new Date(t.payment_date + 'T12:00:00') : null,
-        notes: t.notes ?? ''
+        notes: t.notes ?? '',
+        account_id: t.account_id
       });
       this.updateAvailableCategories();
       this.showPaymentDate.set(t.status === 'paid');
@@ -100,6 +109,8 @@ export class TransactionFormComponent implements OnInit {
         reference_month_date: startOfMonth(new Date())
       });
     }
+
+    this.onStatusChange();
   }
 
   onTypeChange(): void {
@@ -109,10 +120,19 @@ export class TransactionFormComponent implements OnInit {
 
   onStatusChange(): void {
     const status = this.form.get('status')?.value;
-    this.showPaymentDate.set(status === 'paid');
-    if (status === 'paid' && !this.form.get('payment_date_obj')?.value) {
-      this.form.patchValue({ payment_date_obj: new Date() });
+    const isPaid = status === 'paid';
+    this.showPaymentDate.set(isPaid);
+    
+    const accountCtrl = this.form.get('account_id');
+    if (isPaid) {
+      if (!this.form.get('payment_date_obj')?.value) {
+        this.form.patchValue({ payment_date_obj: new Date() });
+      }
+      accountCtrl?.setValidators([Validators.required]);
+    } else {
+      accountCtrl?.clearValidators();
     }
+    accountCtrl?.updateValueAndValidity();
   }
 
   onMonthSelected(event: Date, picker: any): void {
@@ -156,6 +176,7 @@ export class TransactionFormComponent implements OnInit {
         status: v.status as TransactionStatus,
         payment_date: paymentDate,
         notes: v.notes || null,
+        account_id: v.account_id as string | null,
         is_recurring: false
       };
 

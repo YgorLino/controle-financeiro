@@ -44,6 +44,14 @@
             <mat-form-field appearance="outline">
               <mat-label>Categoria *</mat-label>
               <mat-select formControlName="category_id">
+                <mat-select-trigger *ngIf="form.get('category_id')?.value as catId">
+                  <ng-container *ngFor="let cat of availableCategories()">
+                    <div *ngIf="cat.id === catId" style="display:flex;align-items:center;gap:8px">
+                      <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
+                      <span>{{ cat.name }}</span>
+                    </div>
+                  </ng-container>
+                </mat-select-trigger>
                 <mat-option *ngFor="let cat of availableCategories()" [value]="cat.id">
                   <div style="display:flex;align-items:center;gap:8px">
                     <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
@@ -112,6 +120,22 @@
                      placeholder="dd/MM/aaaa">
               <mat-datepicker-toggle matIconSuffix [for]="payPicker"></mat-datepicker-toggle>
               <mat-datepicker #payPicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+
+          <div class="cm-form-row" *ngIf="showPaymentDate()">
+            <!-- Conta de Origem/Destino -->
+            <mat-form-field appearance="outline" class="cm-full-width">
+              <mat-label>Conta (Origem / Destino) *</mat-label>
+              <mat-select formControlName="account_id">
+                <mat-option *ngFor="let acc of accounts()" [value]="acc.id">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <mat-icon [style.color]="acc.color" style="font-size: 18px; width: 18px; height: 18px;">account_balance_wallet</mat-icon>
+                    <span>{{ acc.name }}</span>
+                  </div>
+                </mat-option>
+              </mat-select>
+              <mat-error>Selecione a conta de onde o dinheiro saiu/entrou.</mat-error>
             </mat-form-field>
           </div>
 

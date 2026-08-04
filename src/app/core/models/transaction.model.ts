@@ -15,10 +15,12 @@ export interface Transaction {
   payment_date: string | null;
   notes: string | null;
   recurring_transaction_id: string | null;
+  account_id: string | null;
   created_at: string;
   updated_at: string;
   // Join
   category?: import('./category.model').Category | null;
+  account?: import('./account.model').Account | null;
 }
 
 export interface TransactionFormData {
@@ -31,6 +33,7 @@ export interface TransactionFormData {
   status: TransactionStatus;
   payment_date: string | null;
   notes: string | null;
+  account_id: string | null;
   is_recurring: boolean;
 }
 

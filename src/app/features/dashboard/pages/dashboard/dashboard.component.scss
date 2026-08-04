@@ -55,7 +55,7 @@
     .expense .card-icon { background: rgba(239,68,68,.12);  color: var(--cm-expense); }
     .balance .card-icon { background: rgba(99,102,241,.12); color: var(--cm-primary); }
     .pending .card-icon { background: rgba(245,158,11,.12); color: var(--cm-pending); }
-    .paid .card-icon    { background: rgba(16,185,129,.12); color: var(--cm-paid); }
+    .paid .card-icon    { background: rgba(59,130,246,.12); color: var(--cm-accent); }
     .overdue .card-icon.warn { background: rgba(239,68,68,.12); color: var(--cm-overdue); }
 
     .card-info {
@@ -82,7 +82,7 @@
     .income-value  { color: var(--cm-income); }
     .expense-value { color: var(--cm-expense); }
     .pending-value { color: var(--cm-pending); }
-    .paid-value    { color: var(--cm-paid); }
+    .paid-value    { color: var(--cm-accent); }
     .overdue-value { color: var(--cm-overdue); font-size: 2rem; }
 
     .card-sub {

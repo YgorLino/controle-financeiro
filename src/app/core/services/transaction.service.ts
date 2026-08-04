@@ -39,7 +39,8 @@ export class TransactionService {
         .from('transactions')
         .select(`
           *,
-          category:categories!category_id(id, name, color, transaction_type)
+          category:categories!category_id(id, name, color, transaction_type),
+          account:accounts!account_id(id, name, color)
         `)
         .eq('reference_month', month)
         .order('created_at', { ascending: false });
@@ -58,8 +59,8 @@ export class TransactionService {
 
     const { data, error } = await this.supabase.client
       .from('transactions')
-      .insert({ ...payload, user_id: user.id, amount: Number(formData.amount) })
-      .select(`*, category:categories!category_id(id, name, color, transaction_type)`)
+      .insert({ ...payload, user_id: user.id, amount: Number(formData.amount), account_id: formData.account_id || null })
+      .select(`*, category:categories!category_id(id, name, color, transaction_type), account:accounts!account_id(id, name, color)`)
       .single();
     if (error) throw error;
 
@@ -78,9 +79,9 @@ export class TransactionService {
 
     const { data, error } = await this.supabase.client
       .from('transactions')
-      .update(payload)
+      .update({ ...payload, account_id: payload.account_id || null })
       .eq('id', id)
-      .select(`*, category:categories!category_id(id, name, color, transaction_type)`)
+      .select(`*, category:categories!category_id(id, name, color, transaction_type), account:accounts!account_id(id, name, color)`)
       .single();
     if (error) throw error;
 
@@ -122,16 +123,35 @@ export class TransactionService {
       status: 'pending',
       payment_date: null,
       notes: transaction.notes,
+      account_id: transaction.account_id,
       is_recurring: false
     };
     return this.createTransaction(formData);
   }
 
   async getDashboardSummary(referenceMonth: string): Promise<DashboardSummary> {
+    const user = this.auth.currentUser();
+    
+    if (!user) {
+      return {
+        reference_month: referenceMonth,
+        total_income: 0,
+        total_expense: 0,
+        balance: 0,
+        total_paid: 0,
+        total_pending: 0,
+        pending_count: 0,
+        overdue_count: 0,
+        total_income_count: 0,
+        total_expense_count: 0
+      };
+    }
+
     const { data, error } = await this.supabase.client
       .from('dashboard_summary')
       .select('*')
       .eq('reference_month', referenceMonth)
+      .eq('user_id', user.id)
       .single();
 
     if (error || !data) {
@@ -186,6 +206,7 @@ export class TransactionService {
       payment_date: null,
       notes: t.notes,
       recurring_transaction_id: t.recurring_transaction_id,
+      account_id: t.account_id,
       user_id: user.id
     }));
 

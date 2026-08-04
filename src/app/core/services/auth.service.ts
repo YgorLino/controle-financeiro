@@ -66,7 +66,12 @@ export class AuthService {
       email,
       password
     });
-    if (error) throw error;
+    if (error) {
+      if (error.message.includes('Email not confirmed')) {
+        throw new Error('Por favor, verifique seu e-mail antes de fazer login.');
+      }
+      throw error;
+    }
     return data;
   }
 
