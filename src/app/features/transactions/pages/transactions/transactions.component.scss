@@ -69,11 +69,19 @@
     .amount-dash { color: var(--cm-text-muted); }
 
     .cat-chip {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       padding: 2px 8px;
       border-radius: 99px;
       font-size: .75rem;
       font-weight: 600;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+      }
     }
     .no-cat { background: var(--cm-surface-2); color: var(--cm-text-muted); }
 
@@ -105,4 +113,12 @@
     .card-footer { display: flex; justify-content: space-between; align-items: center; }
     .card-footer span { font-size: .8125rem; color: var(--cm-text-muted); }
     .card-actions { display: flex; gap: 4px; }
-    .cat-chip.mini, .chip.mini { font-size: .7rem; padding: 1px 6px; }
+    .cat-chip.mini, .chip.mini { 
+      font-size: .7rem; 
+      padding: 1px 6px; 
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+    }

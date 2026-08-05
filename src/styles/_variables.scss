@@ -1,72 +1,75 @@
 // src/styles/_variables.scss
 // Design tokens do Controle Maguinho
 
-// ── Paleta (Estilo Fintech Premium) ─────────────────────────
-$primary-50:  #f0fdf4;
-$primary-100: #dcfce7;
-$primary-200: #bbf7d0;
-$primary-300: #86efac;
-$primary-400: #4ade80;
-$primary-500: #22c55e;
-$primary-600: #16a34a; // Verde Sicredi
-$primary-700: #15803d;
-$primary-800: #166534;
-$primary-900: #14532d;
+// ── Paleta (Estilo Fintech Moderna) ─────────────────────────
+// Verde Vibrante
+$primary-50:  #ecfdf5;
+$primary-100: #d1fae5;
+$primary-200: #a7f3d0;
+$primary-300: #6ee7b7;
+$primary-400: #34d399;
+$primary-500: #10b981; 
+$primary-600: #059669; 
+$primary-700: #047857;
+$primary-800: #065f46;
+$primary-900: #064e3b;
 
-$accent-500:  #3b82f6; // Azul corporativo
-$accent-600:  #2563eb;
-$warn-500:    #ef4444;
-$warn-600:    #dc2626;
+// Azul Roxeado (Indigo)
+$accent-500:  #6366f1; 
+$accent-600:  #4f46e5; 
+$warn-500:    #f43f5e; // Vermelho mais vibrante (rose)
+$warn-600:    #e11d48;
 
 // ── Modo Claro ───────────────────────────────────────────────────────────
 :root,
 .light-theme {
-  --cm-bg:            #f4f7f6;
+  --cm-bg:            #f8fafc; // Fundo ligeiramente mais claro
   --cm-surface:       #ffffff;
-  --cm-surface-2:     #f8fafc;
+  --cm-surface-2:     #f1f5f9;
   --cm-border:        #e2e8f0;
-  --cm-text:          #1e293b;
+  --cm-text:          #0f172a;
   --cm-text-muted:    #64748b;
   --cm-text-inverse:  #ffffff;
-  --cm-primary:       #{$primary-600};
+  --cm-primary:       #{$primary-500};
   --cm-primary-light: #{$primary-50};
-  --cm-accent:        #{$accent-500};
+  --cm-accent:        #{$accent-600};
   --cm-warn:          #{$warn-500};
-  --cm-income:        #22c55e;
-  --cm-expense:       #ef4444;
-  --cm-paid:          #22c55e;
+  --cm-income:        #{$primary-500};
+  --cm-expense:       #{$warn-500};
+  --cm-paid:          #{$primary-500};
   --cm-pending:       #f59e0b;
-  --cm-overdue:       #ef4444;
+  --cm-overdue:       #{$warn-500};
   --cm-cancelled:     #94a3b8;
-  --cm-shadow:        0 4px 20px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.02);
-  --cm-shadow-md:     0 10px 30px rgba(0,0,0,0.08), 0 4px 6px -1px rgba(0,0,0,0.04);
-  --cm-shadow-lg:     0 20px 40px rgba(0,0,0,0.1), 0 10px 15px -3px rgba(0,0,0,0.05);
-  --cm-radius:        16px;
-  --cm-radius-sm:     10px;
-  --cm-radius-lg:     24px;
-  --cm-transition:    250ms cubic-bezier(.4,0,.2,1);
+  --cm-shadow:        0 8px 30px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.02);
+  --cm-shadow-md:     0 12px 40px rgba(0,0,0,0.05), 0 4px 10px rgba(0,0,0,0.03);
+  --cm-shadow-lg:     0 20px 50px rgba(0,0,0,0.08), 0 10px 15px -3px rgba(0,0,0,0.04);
+  --cm-radius:        24px; // Arredondado
+  --cm-radius-sm:     12px;
+  --cm-radius-lg:     32px;
+  --cm-radius-pill:   9999px; // Para botões e chips
+  --cm-transition:    300ms cubic-bezier(.4,0,.2,1);
 }
 
 // ── Modo Escuro ───────────────────────────────────────────────────────────
 .dark-theme {
-  --cm-bg:            #0f172a;
-  --cm-surface:       #1e293b;
-  --cm-surface-2:     #273348;
-  --cm-border:        #334155;
-  --cm-text:          #f1f5f9;
-  --cm-text-muted:    #94a3b8;
-  --cm-text-inverse:  #0f172a;
+  --cm-bg:            #09090b; // Fundo mais denso e premium
+  --cm-surface:       #18181b;
+  --cm-surface-2:     #27272a;
+  --cm-border:        #27272a;
+  --cm-text:          #fafafa;
+  --cm-text-muted:    #a1a1aa;
+  --cm-text-inverse:  #09090b;
   --cm-primary:       #{$primary-400};
-  --cm-primary-light: rgba(99,102,241,.15);
+  --cm-primary-light: rgba(16,185,129,.15);
   --cm-accent:        #{$accent-500};
   --cm-warn:          #{$warn-500};
   --cm-income:        #34d399;
-  --cm-expense:       #f87171;
+  --cm-expense:       #fb7185;
   --cm-paid:          #34d399;
   --cm-pending:       #fbbf24;
-  --cm-overdue:       #f87171;
-  --cm-cancelled:     #64748b;
-  --cm-shadow:        0 1px 3px rgba(0,0,0,.3), 0 1px 2px rgba(0,0,0,.2);
-  --cm-shadow-md:     0 4px 6px -1px rgba(0,0,0,.3), 0 2px 4px -1px rgba(0,0,0,.2);
-  --cm-shadow-lg:     0 10px 15px -3px rgba(0,0,0,.3), 0 4px 6px -2px rgba(0,0,0,.2);
+  --cm-overdue:       #fb7185;
+  --cm-cancelled:     #71717a;
+  --cm-shadow:        0 8px 30px rgba(0,0,0,.4), 0 2px 8px rgba(0,0,0,.3);
+  --cm-shadow-md:     0 12px 40px rgba(0,0,0,.5), 0 4px 10px rgba(0,0,0,.4);
+  --cm-shadow-lg:     0 20px 50px rgba(0,0,0,.6), 0 10px 15px -3px rgba(0,0,0,.5);
 }

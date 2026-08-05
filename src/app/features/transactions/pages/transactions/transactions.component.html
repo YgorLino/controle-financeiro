@@ -62,11 +62,19 @@
         <mat-form-field appearance="outline">
           <mat-label>Categoria</mat-label>
           <mat-select [formControl]="categoryCtrl">
+            <mat-select-trigger *ngIf="categoryCtrl.value as catId">
+              <ng-container *ngFor="let cat of categoryService.categories()">
+                <div *ngIf="cat.id === catId" class="cm-category-item">
+                  <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
+                  <span>{{ cat.name }}</span>
+                </div>
+              </ng-container>
+            </mat-select-trigger>
             <mat-option value="">Todas</mat-option>
             <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
-              <div style="display:flex;align-items:center;gap:8px">
-                <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
-                {{ cat.name }}
+              <div class="cm-category-item">
+                <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
+                <span>{{ cat.name }}</span>
               </div>
             </mat-option>
           </mat-select>
@@ -142,8 +150,8 @@
               <td mat-cell *matCellDef="let t">
                 <span *ngIf="t.category" class="cat-chip"
                       [style.background]="t.category.color + '22'"
-                      [style.color]="t.category.color" style="display:inline-flex;align-items:center;gap:4px">
-                  <mat-icon style="font-size: 16px; width: 16px; height: 16px;">{{ t.category.icon || 'category' }}</mat-icon>
+                      [style.color]="t.category.color">
+                  <mat-icon>{{ t.category.icon || 'category' }}</mat-icon>
                   {{ t.category.name }}
                 </span>
                 <span *ngIf="!t.category" class="cat-chip no-cat">Sem categoria</span>
@@ -236,8 +244,8 @@
                 <span class="card-desc">{{ t.description }}</span>
                 <span *ngIf="t.category" class="cat-chip mini"
                       [style.background]="t.category.color + '22'"
-                      [style.color]="t.category.color" style="display:inline-flex;align-items:center;gap:4px">
-                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">{{ t.category.icon || 'category' }}</mat-icon>
+                      [style.color]="t.category.color">
+                  <mat-icon>{{ t.category.icon || 'category' }}</mat-icon>
                   {{ t.category.name }}
                 </span>
               </div>

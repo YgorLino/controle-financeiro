@@ -4,16 +4,17 @@
     }
 
     .sidenav {
-      width: 260px;
+      width: 280px;
       background: var(--cm-surface);
-      border-right: 1px solid var(--cm-border);
+      border-right: none;
+      box-shadow: 2px 0 20px rgba(0,0,0,0.02);
       display: flex;
       flex-direction: column;
     }
 
     .sidenav-header {
-      padding: 20px 16px 12px;
-      border-bottom: 1px solid var(--cm-border);
+      padding: 28px 20px 16px;
+      border-bottom: 1px solid transparent; // Removido para visual mais limpo
     }
 
     .brand {
@@ -26,8 +27,8 @@
       font-size: 1.5rem;
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
-      border-radius: 10px;
+      background: linear-gradient(135deg, var(--cm-accent), var(--cm-primary));
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,15 +52,29 @@
     }
 
     a[mat-list-item] {
-      border-radius: 10px !important;
-      margin-bottom: 2px;
-      height: 44px !important;
-      color: var(--cm-text-muted);
+      border-radius: var(--cm-radius-pill) !important;
+      margin-bottom: 4px;
+      padding: 0 16px;
+      height: 48px !important;
+      color: var(--cm-text-muted) !important;
+      background: rgba(161, 161, 170, 0.04) !important; /* Fundo muito sutil para destacar os itens */
       transition: all var(--cm-transition);
+
+      mat-icon { 
+        color: var(--cm-text-muted) !important; 
+      }
+
+      .mdc-list-item__primary-text {
+        color: var(--cm-text-muted) !important;
+      }
 
       &:hover {
         background: var(--cm-surface-2) !important;
-        color: var(--cm-text);
+        color: var(--cm-text) !important;
+        
+        mat-icon, .mdc-list-item__primary-text { 
+          color: var(--cm-text) !important; 
+        }
       }
 
       &.active-link {
@@ -67,7 +82,9 @@
         color: var(--cm-primary) !important;
         font-weight: 600;
 
-        mat-icon { color: var(--cm-primary); }
+        mat-icon, .mdc-list-item__primary-text { 
+          color: var(--cm-primary) !important; 
+        }
       }
     }
 
@@ -78,9 +95,9 @@
     .user-info {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px 8px;
-      border-radius: 10px;
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--cm-radius-sm);
       cursor: pointer;
       transition: background var(--cm-transition);
 
@@ -88,16 +105,16 @@
     }
 
     .user-avatar {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      background: linear-gradient(135deg, var(--cm-accent), var(--cm-primary));
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: .875rem;
+      font-size: 1rem;
       flex-shrink: 0;
     }
 

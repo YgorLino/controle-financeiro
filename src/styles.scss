@@ -13,8 +13,8 @@ html {
   scroll-behavior: smooth;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
+body, .mat-typography {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
   background-color: var(--cm-bg);
   color: var(--cm-text);
   line-height: 1.5;
@@ -24,6 +24,18 @@ body {
 }
 
 a { color: var(--cm-primary); text-decoration: none; }
+
+// Forçar família e visual moderno nos ícones
+mat-icon, .material-icons {
+  font-family: 'Material Symbols Rounded' !important;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  overflow: visible !important; /* Evita que ícones fiquem "comidos" */
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+}
 
 // ── Scrollbar ─────────────────────────────────────────────────────────
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -189,12 +201,20 @@ a { color: var(--cm-primary); text-decoration: none; }
   box-shadow: var(--cm-shadow-md) !important;
 }
 
-// Botões Primários
-.mdc-button--raised, .mdc-button--unelevated {
-  border-radius: var(--cm-radius-sm) !important;
+// Botões
+.mdc-button, .mat-mdc-button, .mat-mdc-raised-button, .mat-mdc-unelevated-button, .mat-mdc-outlined-button {
+  border-radius: var(--cm-radius-pill) !important;
   text-transform: none !important;
   font-weight: 600 !important;
-  letter-spacing: 0.02em !important;
+  letter-spacing: 0.01em !important;
+}
+
+// Alinhar ícone e texto perfeitamente dentro dos botões
+.mdc-button__label, .mat-button-toggle-label-content {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 // Sidenav container full height
@@ -263,15 +283,28 @@ mat-sidenav-container {
   }
 
   // Botões
-  .mat-mdc-button, .mat-mdc-outlined-button, .mat-mdc-icon-button {
+  .mat-mdc-button, .mat-mdc-icon-button {
     color: var(--cm-text) !important;
   }
-  .mat-mdc-stroked-button {
+  .mat-mdc-outlined-button {
     color: var(--cm-text) !important;
-    border-color: rgba(255,255,255,0.4) !important;
-    background-color: rgba(255,255,255,0.08) !important;
+    border-color: var(--cm-border) !important;
+    background-color: var(--cm-surface-2) !important;
     &:hover {
-      background-color: rgba(255,255,255,0.15) !important;
+      background-color: var(--cm-border) !important;
     }
+  }
+}
+
+// ── Utilitários para exibição de categorias ─────────────────────────────
+.cm-category-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .cm-category-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
   }
 }

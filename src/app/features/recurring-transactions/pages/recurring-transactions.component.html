@@ -65,8 +65,8 @@
               <mat-icon>event</mat-icon>
               <span>Vencimento: dia {{ r.due_day }}</span>
             </div>
-            <div class="detail-item" *ngIf="r.category" style="display:flex;align-items:center;gap:4px">
-              <mat-icon [style.color]="$any(r.category)?.color" style="font-size: 16px; width: 16px; height: 16px;">{{ $any(r.category)?.icon || 'category' }}</mat-icon>
+            <div class="detail-item cm-category-item" *ngIf="r.category">
+              <mat-icon class="cm-category-icon" [style.color]="$any(r.category)?.color">{{ $any(r.category)?.icon || 'category' }}</mat-icon>
               <span>{{ $any(r.category)?.name }}</span>
             </div>
             <div class="detail-item">
@@ -163,11 +163,19 @@
             <mat-form-field appearance="outline">
               <mat-label>Categoria</mat-label>
               <mat-select formControlName="category_id">
+                <mat-select-trigger *ngIf="form.get('category_id')?.value as catId">
+                  <ng-container *ngFor="let cat of categoryService.categories()">
+                    <div *ngIf="cat.id === catId" class="cm-category-item">
+                      <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
+                      <span>{{ cat.name }}</span>
+                    </div>
+                  </ng-container>
+                </mat-select-trigger>
                 <mat-option value="">Sem categoria</mat-option>
                 <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
-                  <div style="display:flex;align-items:center;gap:8px">
-                    <mat-icon [style.color]="cat.color" style="font-size: 18px; width: 18px; height: 18px;">{{ cat.icon || 'category' }}</mat-icon>
-                    {{ cat.name }}
+                  <div class="cm-category-item">
+                    <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
+                    <span>{{ cat.name }}</span>
                   </div>
                 </mat-option>
               </mat-select>
