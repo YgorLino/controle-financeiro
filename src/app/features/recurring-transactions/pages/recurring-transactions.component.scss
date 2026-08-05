@@ -57,8 +57,10 @@
       align-items: center;
       gap: 6px;
       font-size: .8125rem;
-      color: var(--cm-text-muted);
-      mat-icon { font-size: 14px; width: 14px; height: 14px; }
+      color: var(--cm-text-muted) !important;
+      
+      span { color: var(--cm-text-muted) !important; }
+      mat-icon { font-size: 14px; width: 14px; height: 14px; color: inherit !important; }
     }
 
     .cat-dot {

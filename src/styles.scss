@@ -282,8 +282,16 @@ mat-sidenav-container {
     color: var(--cm-text) !important;
   }
 
-  // Botões
+  // Tabela
+  .mat-mdc-cell {
+    color: var(--cm-text) !important;
+  }
+
+  // Botões e Toggles
   .mat-mdc-button, .mat-mdc-icon-button {
+    color: var(--cm-text) !important;
+  }
+  .mat-mdc-slide-toggle .mdc-label, .mat-mdc-checkbox .mdc-label, .mat-mdc-radio-button .mdc-label {
     color: var(--cm-text) !important;
   }
   .mat-mdc-outlined-button {
