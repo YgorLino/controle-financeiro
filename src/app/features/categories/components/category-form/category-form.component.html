@@ -13,8 +13,9 @@
         <form [formGroup]="form" id="category-form">
           <mat-form-field appearance="outline">
             <mat-label>Nome *</mat-label>
-            <input matInput formControlName="name" placeholder="Ex: Alimentação, Salário...">
+            <input matInput formControlName="name" placeholder="Ex: Alimentação, Salário..." maxlength="30">
             <mat-error *ngIf="form.get('name')?.hasError('required')">Informe o nome da categoria.</mat-error>
+            <mat-error *ngIf="form.get('name')?.hasError('maxlength')">No máximo 30 caracteres.</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="outline">

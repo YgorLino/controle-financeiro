@@ -58,6 +58,47 @@ export class RecurringTransactionService {
     if (error) throw error;
 
     this._recurring.update(r => r.map(x => x.id === id ? data : x));
+
+    // Sincronizar transações filhas pendentes ou em atraso
+    try {
+      const { data: childTransactions } = await this.supabase.client
+        .from('transactions')
+        .select('id, reference_month')
+        .eq('recurring_transaction_id', id)
+        .in('status', ['pending', 'overdue']);
+
+      if (childTransactions && childTransactions.length > 0) {
+        const updates = childTransactions.map(tx => {
+          let newDueDate = undefined;
+          if (formData.due_day !== undefined) {
+            const refDate = parseISO(tx.reference_month);
+            const safeDay = Math.min(formData.due_day, 28);
+            const dueDate = setDate(new Date(refDate.getFullYear(), refDate.getMonth(), 1), safeDay);
+            newDueDate = format(dueDate, 'yyyy-MM-dd');
+          }
+
+          const txUpdate: any = {};
+          if (formData.description !== undefined) txUpdate.description = formData.description;
+          if (formData.amount !== undefined) txUpdate.amount = formData.amount;
+          if (formData.category_id !== undefined) txUpdate.category_id = formData.category_id;
+          if (formData.transaction_type !== undefined) txUpdate.transaction_type = formData.transaction_type;
+          if (formData.notes !== undefined) txUpdate.notes = formData.notes;
+          if (newDueDate !== undefined) txUpdate.due_date = newDueDate;
+
+          return this.supabase.client
+            .from('transactions')
+            .update(txUpdate)
+            .eq('id', tx.id);
+        });
+
+        await Promise.all(updates);
+        // Atualiza as transações na tela de forma silenciosa para refletir as mudanças
+        this.transactionService.loadTransactions().catch(e => console.error('Erro ao dar reload:', e));
+      }
+    } catch (e) {
+      console.error('Erro ao sincronizar transações filhas:', e);
+    }
+
     return data;
   }
 

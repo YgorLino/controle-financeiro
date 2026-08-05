@@ -53,7 +53,7 @@ export class CategoryFormComponent implements OnInit {
   get isEdit(): boolean { return !!this.data.category; }
 
   readonly form = this.fb.group({
-    name: ['', [Validators.required]],
+    name: ['', [Validators.required, Validators.maxLength(30)]],
     transaction_type: ['expense', Validators.required],
     color: [PRESET_COLORS[0], Validators.required],
     icon: [PRESET_ICONS[0], Validators.required]

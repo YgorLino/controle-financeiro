@@ -277,9 +277,15 @@ mat-sidenav-container {
     .mdc-list-item__primary-text { color: inherit !important; }
   }
 
-  // Dialogs
+  // Dialogs e Menus
   .mat-mdc-dialog-title, .mat-mdc-dialog-content {
     color: var(--cm-text) !important;
+  }
+  
+  .mat-mdc-menu-item {
+    color: var(--cm-text) !important;
+    mat-icon, .mat-icon { color: var(--cm-text-muted) !important; }
+    &:hover { background: var(--cm-surface-2) !important; }
   }
 
   // Tabela
