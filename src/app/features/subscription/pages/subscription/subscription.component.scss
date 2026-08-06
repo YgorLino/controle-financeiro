@@ -53,11 +53,13 @@
   flex-direction: column;
   position: relative;
   border-radius: 16px;
+  background: var(--bg-secondary) !important;
+  color: var(--text-color) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   }
 
   &.featured {
@@ -176,6 +178,8 @@
   max-width: 500px;
   text-align: center;
   border-radius: 16px;
+  background: var(--bg-secondary) !important;
+  color: var(--text-color) !important;
   
   mat-card-header {
     display: flex;
