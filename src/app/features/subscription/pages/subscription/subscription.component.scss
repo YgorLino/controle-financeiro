@@ -25,12 +25,12 @@
     font-size: 2.5rem;
     font-weight: 700;
     margin: 0 0 16px;
-    color: var(--text-color);
+    color: var(--cm-text);
   }
 
   p {
     font-size: 1.1rem;
-    color: var(--text-secondary);
+    color: var(--cm-text-muted);
     line-height: 1.5;
   }
 }
@@ -53,8 +53,8 @@
   flex-direction: column;
   position: relative;
   border-radius: 16px;
-  background: var(--bg-secondary) !important;
-  color: var(--text-color) !important;
+  background: var(--cm-surface) !important;
+  color: var(--cm-text) !important;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   &:hover {
@@ -91,11 +91,11 @@
     mat-card-title {
       font-size: 1.5rem;
       font-weight: 600;
-      color: var(--text-color);
+      color: var(--cm-text);
     }
     
     mat-card-subtitle {
-      color: var(--text-secondary);
+      color: var(--cm-text-muted);
     }
   }
 
@@ -109,19 +109,19 @@
       .currency {
         font-size: 1.2rem;
         font-weight: 500;
-        color: var(--text-secondary);
+        color: var(--cm-text-muted);
         vertical-align: super;
       }
       
       .amount {
         font-size: 3rem;
         font-weight: 700;
-        color: var(--text-color);
+        color: var(--cm-text);
       }
       
       .period {
         font-size: 1rem;
-        color: var(--text-secondary);
+        color: var(--cm-text-muted);
       }
     }
 
@@ -135,7 +135,7 @@
         align-items: center;
         gap: 12px;
         margin-bottom: 16px;
-        color: var(--text-color);
+        color: var(--cm-text);
 
         mat-icon {
           color: #10b981; /* green */
@@ -170,7 +170,7 @@
   align-items: center;
   gap: 16px;
   margin: 40px 0;
-  color: var(--text-secondary);
+  color: var(--cm-text-muted);
 }
 
 .pix-card {
@@ -178,8 +178,8 @@
   max-width: 500px;
   text-align: center;
   border-radius: 16px;
-  background: var(--bg-secondary) !important;
-  color: var(--text-color) !important;
+  background: var(--cm-surface) !important;
+  color: var(--cm-text) !important;
   
   mat-card-header {
     display: flex;
@@ -188,10 +188,10 @@
     margin-bottom: 24px;
     
     mat-card-title {
-      color: var(--text-color);
+      color: var(--cm-text);
     }
     mat-card-subtitle {
-      color: var(--text-secondary);
+      color: var(--cm-text-muted);
     }
   }
 
@@ -225,7 +225,7 @@
       p {
         margin-bottom: 8px;
         font-size: 0.9rem;
-        color: var(--text-secondary);
+        color: var(--cm-text-muted);
       }
 
       .code-box {
@@ -236,10 +236,10 @@
         input {
           flex: 1;
           padding: 12px;
-          border: 1px solid var(--border-color);
+          border: 1px solid var(--cm-border);
           border-radius: 8px;
-          background: var(--bg-secondary);
-          color: var(--text-color);
+          background: var(--cm-surface-2);
+          color: var(--cm-text);
           font-family: monospace;
           font-size: 0.9rem;
           outline: none;
