@@ -1,0 +1,102 @@
+<div class="subscription-container fade-up">
+  <div class="subscription-header">
+    <mat-icon class="logo-icon">account_balance_wallet</mat-icon>
+    <h1>Controle Financeiro Premium</h1>
+    <p>Sua assinatura expirou ou ainda não foi ativada.<br>Escolha um plano para continuar usando o sistema.</p>
+  </div>
+
+  <div *ngIf="loading()" class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Gerando seu PIX...</p>
+  </div>
+
+  <ng-container *ngIf="!loading() && !pixData()">
+    <div class="plans-grid">
+      <!-- Plano Mensal -->
+      <mat-card class="plan-card">
+        <mat-card-header>
+          <mat-card-title>Plano Mensal</mat-card-title>
+          <mat-card-subtitle>Acesso por 30 dias</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="price">
+            <span class="currency">R$</span>
+            <span class="amount">9,90</span>
+            <span class="period">/mês</span>
+          </div>
+          <ul class="features">
+            <li><mat-icon>check_circle</mat-icon> Controle de gastos ilimitado</li>
+            <li><mat-icon>check_circle</mat-icon> Gestão de recorrências</li>
+            <li><mat-icon>check_circle</mat-icon> Dashboards detalhados</li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-flat-button color="primary" class="full-width" (click)="selectPlan('monthly')">
+            Pagar via PIX
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Plano Anual -->
+      <mat-card class="plan-card featured">
+        <div class="badge">Mais popular (30% OFF)</div>
+        <mat-card-header>
+          <mat-card-title>Plano Anual</mat-card-title>
+          <mat-card-subtitle>Acesso por 1 ano inteiro</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="price">
+            <span class="currency">R$</span>
+            <span class="amount">83,16</span>
+            <span class="period">/ano</span>
+          </div>
+          <ul class="features">
+            <li><mat-icon>check_circle</mat-icon> Tudo do plano mensal</li>
+            <li><mat-icon>check_circle</mat-icon> Preço travado por 1 ano</li>
+            <li><mat-icon>check_circle</mat-icon> Desconto equivalente a 3 meses</li>
+          </ul>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-flat-button color="primary" class="full-width" (click)="selectPlan('annual')">
+            Pagar via PIX
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+    
+    <div class="logout-action">
+      <button mat-button (click)="logout()">Sair da conta</button>
+    </div>
+  </ng-container>
+
+  <!-- Tela do PIX gerado -->
+  <ng-container *ngIf="pixData() as pix">
+    <mat-card class="pix-card">
+      <mat-card-header>
+        <mat-card-title>Escaneie o QR Code</mat-card-title>
+        <mat-card-subtitle>Abra o app do seu banco e pague via PIX</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content class="pix-content">
+        <img [src]="'data:image/png;base64,' + pix.qr_code_base64" alt="QR Code PIX" class="qr-code">
+        
+        <p class="waiting-text">
+          <mat-spinner diameter="20"></mat-spinner>
+          Aguardando confirmação do pagamento...
+        </p>
+
+        <div class="copy-paste">
+          <p>Ou copie o código abaixo:</p>
+          <div class="code-box">
+            <input readonly [value]="pix.qr_code">
+            <button mat-icon-button (click)="copyPix()" aria-label="Copiar código">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+      <mat-card-actions class="pix-actions">
+        <button mat-button (click)="cancelPayment()">Voltar aos planos</button>
+      </mat-card-actions>
+    </mat-card>
+  </ng-container>
+</div>

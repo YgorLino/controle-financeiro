@@ -5,6 +5,8 @@ export interface Profile {
   email: string;
   avatar_url?: string | null;
   theme: 'light' | 'dark' | 'system';
+  subscription_status?: 'active' | 'inactive';
+  subscription_expires_at?: string | null;
   created_at: string;
   updated_at: string;
 }

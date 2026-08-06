@@ -27,14 +27,14 @@ export class AuthService {
   private async initialize(): Promise<void> {
     const { data: { session } } = await this.supabase.client.auth.getSession();
     this._session.set(session);
-    if (session?.user) await this.loadProfile(session.user.id);
+    if (session?.user) await this.reloadProfile();
     this._loading.set(false);
 
     this.supabase.client.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
         this._session.set(session);
         if (session?.user) {
-          await this.loadProfile(session.user.id);
+          await this.reloadProfile();
         } else {
           this._profile.set(null);
         }
@@ -42,11 +42,13 @@ export class AuthService {
     );
   }
 
-  private async loadProfile(userId: string): Promise<void> {
+  async reloadProfile(): Promise<void> {
+    const user = this._session()?.user;
+    if (!user) return;
     const { data } = await this.supabase.client
       .from('profiles')
       .select('*')
-      .eq('id', userId)
+      .eq('id', user.id)
       .single();
     this._profile.set(data);
   }

@@ -1,12 +1,18 @@
 // src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { authGuard, guestGuard, subscriptionGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full'
+  },
+  {
+    path: 'subscription',
+    loadComponent: () => import('./features/subscription/pages/subscription/subscription.component')
+      .then(m => m.SubscriptionComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'auth',
@@ -40,7 +46,7 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('./layout/main-layout/main-layout.component')
       .then(m => m.MainLayoutComponent),
-    canActivate: [authGuard],
+    canActivate: [authGuard, subscriptionGuard],
     children: [
       {
         path: 'dashboard',
