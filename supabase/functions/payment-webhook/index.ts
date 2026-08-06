@@ -28,7 +28,8 @@ serve(async (req: Request) => {
     const paymentId = body.data?.id || id
 
     // Se não for evento de pagamento ou não tiver ID, retornamos 200 para o MP parar de enviar
-    if ((action !== 'payment.created' && action !== 'payment.updated') || !paymentId) {
+    if ((action !== 'payment.created' && action !== 'payment.updated' && action !== 'payment') || !paymentId) {
+      console.log('Ignorado action:', action, 'paymentId:', paymentId)
       return new Response('Ignorado', { status: 200 })
     }
 
