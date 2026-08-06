@@ -14,14 +14,17 @@ serve(async (req: Request) => {
 
   try {
     const url = new URL(req.url)
+    console.log('Webhook URL:', req.url)
+    
     const topic = url.searchParams.get('topic') || url.searchParams.get('type')
     const id = url.searchParams.get('data.id') || url.searchParams.get('id')
 
-    let body = {}
+    let body: any = {}
     try {
       body = await req.json()
+      console.log('Webhook Body:', JSON.stringify(body))
     } catch (e) {
-      // Body may be empty if Mercado Pago uses query params
+      console.log('No JSON body')
     }
 
     const action = body.action || topic
@@ -33,13 +36,15 @@ serve(async (req: Request) => {
       return new Response('Ignorado', { status: 200 })
     }
 
+    console.log(`Processing paymentId: ${paymentId}, action: ${action}`)
+
     const mpAccessToken = Deno.env.get('MP_ACCESS_TOKEN')
     if (!mpAccessToken) {
+      console.error('Missing MP_ACCESS_TOKEN')
       throw new Error('Mercado Pago token not configured')
     }
 
     // 1. Buscar os detalhes REAIS do pagamento na API do MP
-    // (Nunca confie apenas nos dados que chegam no webhook)
     const mpResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
       headers: {
         'Authorization': `Bearer ${mpAccessToken}`
@@ -47,14 +52,18 @@ serve(async (req: Request) => {
     })
 
     const mpData = await mpResponse.json()
+    console.log('MP Payment Status:', mpData.status)
 
     if (!mpResponse.ok) {
+      console.error('Failed to fetch from MP:', mpData)
       throw new Error('Failed to fetch payment details')
     }
 
     // 2. Checar se foi aprovado
     if (mpData.status === 'approved') {
       const externalReference = mpData.external_reference
+      console.log('External Reference:', externalReference)
+      
       if (!externalReference) {
         throw new Error('No external_reference in payment')
       }

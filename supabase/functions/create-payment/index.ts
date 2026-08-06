@@ -54,6 +54,9 @@ serve(async (req: Request) => {
 
     const idempotencyKey = crypto.randomUUID()
     
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const notificationUrl = `${supabaseUrl}/functions/v1/payment-webhook`
+
     const mpResponse = await fetch('https://api.mercadopago.com/v1/payments', {
       method: 'POST',
       headers: {
@@ -68,7 +71,8 @@ serve(async (req: Request) => {
         payer: {
           email: user.email
         },
-        external_reference: `${user.id}___${planId}`
+        external_reference: `${user.id}___${planId}`,
+        notification_url: notificationUrl
       })
     })
 
