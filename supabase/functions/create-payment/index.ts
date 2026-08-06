@@ -26,12 +26,12 @@ serve(async (req: Request) => {
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
     )
 
-    // Obter o usuário autenticado
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser()
+    // Obter o usuário autenticado usando o token recebido
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
     if (userError || !user) {
+      console.error('Auth Error:', userError)
       throw new Error('Unauthorized')
     }
 
@@ -41,7 +41,7 @@ serve(async (req: Request) => {
     let planId = 'monthly'
 
     if (plan === 'annual') {
-      transactionAmount = 83.16
+      transactionAmount = 80.00
       description = 'Assinatura Anual - Controle Financeiro'
       planId = 'annual'
     }
