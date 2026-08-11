@@ -37,14 +37,54 @@ export class RecurringTransactionService {
     const user = this.auth.currentUser();
     if (!user) throw new Error('Não autenticado');
 
+    const payload = {
+      ...formData,
+      recurrence_type: formData.recurrence_type ?? 'subscription',
+      user_id: user.id
+    };
+
     const { data, error } = await this.supabase.client
       .from('recurring_transactions')
-      .insert({ ...formData, user_id: user.id })
+      .insert(payload)
       .select(`*, category:categories!category_id(id, name, color)`)
       .single();
     if (error) throw error;
 
     this._recurring.update(r => [...r, data]);
+
+    if (payload.recurrence_type === 'installment' && payload.installments) {
+      const inserts = [];
+      const [yearStr, monthStr] = payload.start_date.split('-');
+      const startYear = Number(yearStr);
+      const startMonth = Number(monthStr) - 1;
+
+      for (let i = 0; i < payload.installments; i++) {
+        const currentMonth = new Date(startYear, startMonth + i, 1);
+        const refMonthStr = format(currentMonth, 'yyyy-MM-01');
+        const safeDay = Math.min(payload.due_day, 28);
+        const dueDate = setDate(currentMonth, safeDay);
+
+        inserts.push({
+          user_id: user.id,
+          description: `${payload.description} (${i + 1}/${payload.installments})`,
+          transaction_type: payload.transaction_type,
+          amount: payload.amount,
+          category_id: payload.category_id,
+          reference_month: refMonthStr,
+          due_date: format(dueDate, 'yyyy-MM-dd'),
+          status: 'pending' as TransactionStatus,
+          payment_date: null,
+          notes: payload.notes,
+          recurring_transaction_id: data.id
+        });
+      }
+
+      if (inserts.length > 0) {
+        await this.supabase.client.from('transactions').insert(inserts);
+        this.transactionService.loadTransactions().catch(e => console.error(e));
+      }
+    }
+
     return data;
   }
 
@@ -78,7 +118,6 @@ export class RecurringTransactionService {
           }
 
           const txUpdate: any = {};
-          if (formData.description !== undefined) txUpdate.description = formData.description;
           if (formData.amount !== undefined) txUpdate.amount = formData.amount;
           if (formData.category_id !== undefined) txUpdate.category_id = formData.category_id;
           if (formData.transaction_type !== undefined) txUpdate.transaction_type = formData.transaction_type;
@@ -92,7 +131,6 @@ export class RecurringTransactionService {
         });
 
         await Promise.all(updates);
-        // Atualiza as transações na tela de forma silenciosa para refletir as mudanças
         this.transactionService.loadTransactions().catch(e => console.error('Erro ao dar reload:', e));
       }
     } catch (e) {
@@ -102,7 +140,15 @@ export class RecurringTransactionService {
     return data;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string, deleteFuture: boolean = false): Promise<void> {
+    if (deleteFuture) {
+      await this.supabase.client
+        .from('transactions')
+        .delete()
+        .eq('recurring_transaction_id', id)
+        .in('status', ['pending', 'overdue']);
+    }
+
     const { error } = await this.supabase.client
       .from('recurring_transactions')
       .delete()
@@ -133,6 +179,7 @@ export class RecurringTransactionService {
 
     const activeRecurring = this._recurring().filter(r => {
       if (!r.is_active) return false;
+      if (r.recurrence_type === 'installment') return false;
       const start = startOfMonth(parseISO(r.start_date));
       if (isAfter(start, targetDate)) return false;
       if (r.end_date && isBefore(parseISO(r.end_date), targetDate)) return false;

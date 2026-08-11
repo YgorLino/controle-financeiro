@@ -154,6 +154,10 @@ export class TransactionService {
       .eq('user_id', user.id)
       .single();
 
+    const { data: cashFlow } = await this.supabase.client
+      .rpc('get_cash_flow_summary', { target_month: referenceMonth })
+      .maybeSingle();
+
     if (error || !data) {
       return {
         reference_month: referenceMonth,
@@ -165,7 +169,9 @@ export class TransactionService {
         pending_count: 0,
         overdue_count: 0,
         total_income_count: 0,
-        total_expense_count: 0
+        total_expense_count: 0,
+        realized_income: 0,
+        realized_expense: 0
       };
     }
 
@@ -175,7 +181,9 @@ export class TransactionService {
       total_expense: Number(data.total_expense),
       balance: Number(data.balance),
       total_paid: Number(data.total_paid),
-      total_pending: Number(data.total_pending)
+      total_pending: Number(data.total_pending),
+      realized_income: cashFlow ? Number((cashFlow as any).realized_income) : 0,
+      realized_expense: cashFlow ? Number((cashFlow as any).realized_expense) : 0
     };
   }
 
@@ -195,7 +203,10 @@ export class TransactionService {
     const user = this.auth.currentUser();
     if (!user) throw new Error('Não autenticado');
 
-    const newTransactions = prevTransactions.map((t: Transaction) => ({
+    const avulsas = prevTransactions.filter((t: Transaction) => !t.recurring_transaction_id);
+    if (avulsas.length === 0) return [];
+
+    const newTransactions = avulsas.map((t: Transaction) => ({
       description: t.description,
       transaction_type: t.transaction_type,
       amount: t.amount,
@@ -205,7 +216,7 @@ export class TransactionService {
       status: 'pending' as TransactionStatus,
       payment_date: null,
       notes: t.notes,
-      recurring_transaction_id: t.recurring_transaction_id,
+      recurring_transaction_id: null,
       account_id: t.account_id,
       user_id: user.id
     }));
@@ -218,5 +229,30 @@ export class TransactionService {
     if (insertError) throw insertError;
     this._transactions.update(txns => [...(created ?? []), ...txns]);
     return created ?? [];
+  }
+
+  async getFuturePendingInstallments(recurringId: string, currentReferenceMonth: string): Promise<Transaction[]> {
+    const { data, error } = await this.supabase.client
+      .from('transactions')
+      .select('*')
+      .eq('recurring_transaction_id', recurringId)
+      .in('status', ['pending', 'overdue'])
+      .gt('reference_month', currentReferenceMonth)
+      .order('reference_month', { ascending: true });
+    
+    if (error) throw error;
+    return data ?? [];
+  }
+
+  async amortizeInstallments(transactionIds: string[]): Promise<void> {
+    if (!transactionIds.length) return;
+    const paymentDate = format(new Date(), 'yyyy-MM-dd');
+    const updates = transactionIds.map(id => 
+      this.supabase.client
+        .from('transactions')
+        .update({ status: 'paid', payment_date: paymentDate })
+        .eq('id', id)
+    );
+    await Promise.all(updates);
   }
 }

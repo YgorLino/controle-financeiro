@@ -1,0 +1,48 @@
+<div class="dialog-header">
+  <div class="icon-container success">
+    <mat-icon>payments</mat-icon>
+  </div>
+  <h2 mat-dialog-title>Pagar e Amortizar</h2>
+</div>
+
+<mat-dialog-content>
+  <p class="dialog-message">
+    Você está marcando <strong>"{{ data.currentTransaction.description }}"</strong> como pago.<br>
+    Como esta conta faz parte de uma recorrência, você pode aproveitar para adiantar o pagamento de meses futuros.
+  </p>
+
+  <div class="amortization-box">
+    <div class="box-header">
+      <span class="box-title">Antecipar Parcelas Futuras</span>
+      <span class="box-value">{{ amortizeCount }} de {{ maxAmortization }}</span>
+    </div>
+    
+    <mat-slider class="amortize-slider" min="0" [max]="maxAmortization" step="1" discrete>
+      <input matSliderThumb [(ngModel)]="amortizeCount">
+    </mat-slider>
+    
+    <div class="summary">
+      <div class="summary-item">
+        <span>Parcela atual</span>
+        <span>{{ data.currentTransaction.amount | currencyBr }}</span>
+      </div>
+      <div class="summary-item" *ngIf="amortizeCount > 0">
+        <span>+ {{ amortizeCount }} parcela(s) antecipada(s)</span>
+        <span>{{ (totalValue - data.currentTransaction.amount) | currencyBr }}</span>
+      </div>
+      <mat-divider style="margin: 8px 0"></mat-divider>
+      <div class="summary-item total">
+        <span>Total a pagar agora</span>
+        <span class="total-value">{{ totalValue | currencyBr }}</span>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="primary" (click)="confirm()">
+    <mat-icon>check_circle</mat-icon>
+    Confirmar Pagamento
+  </button>
+</mat-dialog-actions>

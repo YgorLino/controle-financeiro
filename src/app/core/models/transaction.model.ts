@@ -54,4 +54,6 @@ export interface DashboardSummary {
   overdue_count: number;
   total_income_count: number;
   total_expense_count: number;
+  realized_income?: number;
+  realized_expense?: number;
 }

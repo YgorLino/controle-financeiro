@@ -56,21 +56,33 @@ export class DashboardComponent implements OnInit {
   readonly summary = signal<DashboardSummary | null>(null);
   readonly currentMonthDate = signal(startOfMonth(new Date()));
 
-  readonly commitedPct = computed(() => {
+  readonly totalIncome = computed(() => {
     const s = this.summary();
-    if (!s || s.total_income === 0) return 0;
-    return Math.min(100, Math.round((s.total_expense / s.total_income) * 100));
+    const pending = this.transactionService.transactions()
+      .filter(t => t.transaction_type === 'income' && t.status !== 'paid' && t.status !== 'cancelled')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return (s?.realized_income ?? 0) + pending;
+  });
+
+  readonly totalExpense = computed(() => {
+    const s = this.summary();
+    const pending = this.transactionService.transactions()
+      .filter(t => t.transaction_type === 'expense' && t.status !== 'paid' && t.status !== 'cancelled')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return (s?.realized_expense ?? 0) + pending;
+  });
+
+  readonly commitedPct = computed(() => {
+    const inc = this.totalIncome();
+    const exp = this.totalExpense();
+    if (inc === 0) return 0;
+    return Math.min(100, Math.round((exp / inc) * 100));
   });
 
   readonly realizedBalance = computed(() => {
-    const txns = this.transactionService.transactions();
-    const realizedIncome = txns
-      .filter(t => t.transaction_type === 'income' && t.status === 'paid')
-      .reduce((sum, t) => sum + Number(t.amount), 0);
-    const realizedExpense = txns
-      .filter(t => t.transaction_type === 'expense' && t.status === 'paid')
-      .reduce((sum, t) => sum + Number(t.amount), 0);
-    return realizedIncome - realizedExpense;
+    const s = this.summary();
+    if (!s) return 0;
+    return (s.realized_income ?? 0) - (s.realized_expense ?? 0);
   });
 
   // Doughnut: despesas por categoria
@@ -103,12 +115,11 @@ export class DashboardComponent implements OnInit {
 
   // Bar: entradas vs saídas
   readonly barData = computed<ChartData<'bar'>>(() => {
-    const s = this.summary();
     return {
       labels: ['Entradas', 'Saídas'],
       datasets: [{
         label: 'Valor (R$)',
-        data: [s?.total_income ?? 0, s?.total_expense ?? 0],
+        data: [this.totalIncome(), this.totalExpense()],
         backgroundColor: ['rgba(16,185,129,.7)', 'rgba(239,68,68,.7)'],
         borderColor: ['#10b981', '#ef4444'],
         borderWidth: 2,

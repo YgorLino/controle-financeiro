@@ -25,6 +25,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { RecurringTransaction, RecurringFormData, RecurringFrequency } from '../../../core/models/recurring-transaction.model';
 import { TransactionType } from '../../../core/models/transaction.model';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { DeleteRecurringDialogComponent } from '../../../shared/components/delete-recurring-dialog/delete-recurring-dialog.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { CurrencyBrPipe } from '../../../shared/pipes/currency-br.pipe';
@@ -72,6 +73,8 @@ export class RecurringTransactionsComponent implements OnInit {
   readonly recurring = this.recurringService.recurring;
 
   readonly form = this.fb.group({
+    recurrence_type: ['subscription' as 'subscription' | 'installment', Validators.required],
+    installments: [null as number | null],
     transaction_type: ['expense' as TransactionType, Validators.required],
     frequency: ['monthly' as RecurringFrequency, Validators.required],
     description: ['', Validators.required],
@@ -103,6 +106,8 @@ export class RecurringTransactionsComponent implements OnInit {
     this.editingRecurring.set(recurring ?? null);
     if (recurring) {
       this.form.patchValue({
+        recurrence_type: recurring.recurrence_type ?? 'subscription',
+        installments: recurring.installments ?? null,
         transaction_type: recurring.transaction_type,
         frequency: recurring.frequency,
         description: recurring.description,
@@ -115,6 +120,8 @@ export class RecurringTransactionsComponent implements OnInit {
       });
     } else {
       this.form.reset({
+        recurrence_type: 'subscription',
+        installments: null,
         transaction_type: 'expense',
         frequency: 'monthly',
         due_day: 1,
@@ -131,10 +138,18 @@ export class RecurringTransactionsComponent implements OnInit {
 
   async onSave(): Promise<void> {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    
+    const v = this.form.value;
+    if (v.recurrence_type === 'installment' && (!v.installments || v.installments <= 0)) {
+      this.notify.error('Por favor, informe um número válido de parcelas.');
+      return;
+    }
+
     this.formLoading.set(true);
     try {
-      const v = this.form.value;
       const payload: RecurringFormData = {
+        recurrence_type: v.recurrence_type as 'subscription' | 'installment',
+        installments: v.installments ? Number(v.installments) : null,
         transaction_type: v.transaction_type as TransactionType,
         frequency: v.frequency as RecurringFrequency,
         description: v.description!,
@@ -172,18 +187,16 @@ export class RecurringTransactionsComponent implements OnInit {
   }
 
   confirmDelete(r: RecurringTransaction): void {
-    const ref = this.dialog.open(ConfirmDialogComponent, {
-      data: {
-        title: 'Excluir recorrência',
-        message: `Deseja excluir a recorrência "${r.description}"? Os lançamentos já gerados não serão afetados.`,
-        confirmLabel: 'Excluir',
-        danger: true
-      }
+    const ref = this.dialog.open(DeleteRecurringDialogComponent, {
+      width: '500px',
+      maxWidth: '98vw',
+      data: { recurring: r }
     });
-    ref.afterClosed().subscribe(async confirmed => {
-      if (!confirmed) return;
+    
+    ref.afterClosed().subscribe(async (result: any) => {
+      if (!result) return;
       try {
-        await this.recurringService.delete(r.id);
+        await this.recurringService.delete(r.id, result.deleteFuture);
         this.notify.success('Recorrência excluída com sucesso.');
       } catch {
         this.notify.error('Não foi possível excluir a recorrência.');

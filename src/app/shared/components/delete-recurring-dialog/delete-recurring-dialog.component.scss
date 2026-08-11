@@ -1,0 +1,78 @@
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 24px 0;
+  
+  .icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    
+    &.warn {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--cm-text);
+  }
+}
+
+.dialog-message {
+  margin: 16px 0 24px;
+  color: var(--cm-text-light);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  strong { color: var(--cm-text); }
+}
+
+.options-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.option-card {
+  border: 1px solid var(--cm-border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s ease;
+  background: var(--cm-card-bg);
+
+  &.selected {
+    border-color: var(--cm-primary);
+    background: rgba(99, 102, 241, 0.04);
+  }
+
+  /* Faz o radio original ocupar o espaço todo pra não quebrar flex, ajusta margens do Angular Material se necessário */
+  ::ng-deep .mdc-form-field {
+    align-items: flex-start;
+  }
+}
+
+.option-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .option-title {
+    font-weight: 600;
+    color: var(--cm-text);
+    font-size: 1rem;
+  }
+
+  .option-desc {
+    color: var(--cm-text-light);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    white-space: normal;
+  }
+}

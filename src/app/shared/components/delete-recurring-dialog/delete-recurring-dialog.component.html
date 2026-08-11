@@ -1,0 +1,34 @@
+<div class="dialog-header">
+  <div class="icon-container warn">
+    <mat-icon>delete_forever</mat-icon>
+  </div>
+  <h2 mat-dialog-title>Excluir Recorrência</h2>
+</div>
+
+<mat-dialog-content>
+  <p class="dialog-message">
+    Você está prestes a excluir a recorrência <strong>"{{ data.recurring.description }}"</strong>.<br>
+    O que você deseja fazer com as parcelas/movimentações futuras que já foram geradas por ela no sistema e ainda estão pendentes?
+  </p>
+
+  <mat-radio-group class="options-group" [(ngModel)]="selectedOption">
+    <mat-radio-button value="cancel_only" class="option-card" [class.selected]="selectedOption === 'cancel_only'">
+      <div class="option-content">
+        <span class="option-title">Apenas parar a recorrência</span>
+        <span class="option-desc">As parcelas que já estão geradas nos próximos meses ficarão lá. Nada será apagado, apenas deixará de gerar para os meses vazios.</span>
+      </div>
+    </mat-radio-button>
+
+    <mat-radio-button value="delete_future" class="option-card" [class.selected]="selectedOption === 'delete_future'">
+      <div class="option-content">
+        <span class="option-title">Apagar parcelas futuras pendentes</span>
+        <span class="option-desc">Ideal se você vendeu o bem ou amortizou tudo. As parcelas já pagas (no passado) ficam intactas no extrato, mas o que estiver pendente no futuro será deletado.</span>
+      </div>
+    </mat-radio-button>
+  </mat-radio-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancelar</button>
+  <button mat-flat-button color="warn" (click)="confirm()">Excluir Definitivamente</button>
+</mat-dialog-actions>

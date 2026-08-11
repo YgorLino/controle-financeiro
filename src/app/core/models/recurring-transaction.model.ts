@@ -17,6 +17,8 @@ export interface RecurringTransaction {
   frequency: RecurringFrequency;
   is_active: boolean;
   notes: string | null;
+  recurrence_type: 'subscription' | 'installment';
+  installments: number | null;
   created_at: string;
   updated_at: string;
   // Join
@@ -33,4 +35,6 @@ export interface RecurringFormData {
   due_day: number;
   frequency: RecurringFrequency;
   notes: string | null;
+  recurrence_type: 'subscription' | 'installment';
+  installments: number | null;
 }

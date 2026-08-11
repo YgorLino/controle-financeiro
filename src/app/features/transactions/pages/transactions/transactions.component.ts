@@ -23,11 +23,12 @@ import { MatDividerModule } from '@angular/material/divider';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { CategoryService } from '../../../../core/services/category.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { Transaction, TransactionType, TransactionStatus } from '../../../../core/models/transaction.model';
+import { Transaction, TransactionType, TransactionStatus, DashboardSummary } from '../../../../core/models/transaction.model';
 import { MonthSelectorComponent } from '../../../../shared/components/month-selector/month-selector.component';
 import { SkeletonLoaderComponent } from '../../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { AmortizationDialogComponent } from '../../../../shared/components/amortization-dialog/amortization-dialog.component';
 import { CurrencyBrPipe } from '../../../../shared/pipes/currency-br.pipe';
 import { ReferenceMonthPipe } from '../../../../shared/pipes/reference-month.pipe';
 import { TransactionFormComponent } from '../../components/transaction-form/transaction-form.component';
@@ -76,6 +77,8 @@ export class TransactionsComponent implements OnInit {
     this.isMobile.set(window.innerWidth < 768);
   }
 
+  readonly summary = signal<DashboardSummary | null>(null);
+
   readonly filteredTransactions = computed(() => {
     const search = (this.searchCtrl.value ?? '').toLowerCase();
     const cat = this.categoryCtrl.value ?? '';
@@ -91,29 +94,29 @@ export class TransactionsComponent implements OnInit {
     });
   });
 
-  readonly totalIncome = computed(() =>
-    this.filteredTransactions()
-      .filter(t => t.transaction_type === 'income')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
-  );
+  readonly totalIncome = computed(() => {
+    const s = this.summary();
+    const pending = this.filteredTransactions()
+      .filter(t => t.transaction_type === 'income' && t.status !== 'paid' && t.status !== 'cancelled')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return (s?.realized_income ?? 0) + pending;
+  });
 
-  readonly totalExpense = computed(() =>
-    this.filteredTransactions()
-      .filter(t => t.transaction_type === 'expense')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
-  );
+  readonly totalExpense = computed(() => {
+    const s = this.summary();
+    const pending = this.filteredTransactions()
+      .filter(t => t.transaction_type === 'expense' && t.status !== 'paid' && t.status !== 'cancelled')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return (s?.realized_expense ?? 0) + pending;
+  });
 
-  readonly realizedIncome = computed(() =>
-    this.filteredTransactions()
-      .filter(t => t.transaction_type === 'income' && t.status === 'paid')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
-  );
+  readonly realizedIncome = computed(() => {
+    return this.summary()?.realized_income ?? 0;
+  });
 
-  readonly realizedExpense = computed(() =>
-    this.filteredTransactions()
-      .filter(t => t.transaction_type === 'expense' && t.status === 'paid')
-      .reduce((sum, t) => sum + Number(t.amount), 0)
-  );
+  readonly realizedExpense = computed(() => {
+    return this.summary()?.realized_expense ?? 0;
+  });
 
   readonly projectedBalance = computed(() => this.totalIncome() - this.totalExpense());
   readonly realizedBalance = computed(() => this.realizedIncome() - this.realizedExpense());
@@ -140,10 +143,12 @@ export class TransactionsComponent implements OnInit {
     this.loading.set(true);
     try {
       const monthStr = this.transactionService.getReferenceMonthString(this.currentMonthDate());
-      await Promise.all([
+      const [_, __, s] = await Promise.all([
         this.transactionService.loadTransactions(monthStr),
-        this.categoryService.loadCategories()
+        this.categoryService.loadCategories(),
+        this.transactionService.getDashboardSummary(monthStr)
       ]);
+      this.summary.set(s);
     } catch {
       this.notify.error('Não foi possível carregar as movimentações.');
     } finally {
@@ -184,9 +189,50 @@ export class TransactionsComponent implements OnInit {
     });
   }
 
+  private async refreshSummary(): Promise<void> {
+    const monthStr = this.transactionService.getReferenceMonthString(this.currentMonthDate());
+    const s = await this.transactionService.getDashboardSummary(monthStr);
+    this.summary.set(s);
+  }
+
   async markAsPaid(t: Transaction): Promise<void> {
     try {
+      if (t.recurring_transaction_id) {
+        const future = await this.transactionService.getFuturePendingInstallments(
+          t.recurring_transaction_id,
+          t.reference_month
+        );
+        
+        if (future.length > 0) {
+          const ref = this.dialog.open(AmortizationDialogComponent, {
+            width: '500px',
+            maxWidth: '98vw',
+            data: { currentTransaction: t, futureTransactions: future }
+          });
+          
+          ref.afterClosed().subscribe(async (result: any) => {
+            if (!result) return;
+            try {
+              await this.transactionService.updateStatus(t.id, 'paid');
+              
+              if (result.amortizeCount > 0) {
+                const idsToAmortize = future.slice(0, result.amortizeCount).map(f => f.id);
+                await this.transactionService.amortizeInstallments(idsToAmortize);
+              }
+              await this.refreshSummary();
+              this.notify.success(result.amortizeCount > 0 
+                ? 'Pagamento e amortização realizados com sucesso.' 
+                : 'Status atualizado com sucesso.');
+            } catch {
+              this.notify.error('Não foi possível realizar o pagamento.');
+            }
+          });
+          return;
+        }
+      }
+
       await this.transactionService.updateStatus(t.id, 'paid');
+      await this.refreshSummary();
       this.notify.success('Status atualizado com sucesso.');
     } catch {
       this.notify.error('Não foi possível atualizar o status.');
@@ -196,6 +242,7 @@ export class TransactionsComponent implements OnInit {
   async markAsPending(t: Transaction): Promise<void> {
     try {
       await this.transactionService.updateStatus(t.id, 'pending');
+      await this.refreshSummary();
       this.notify.success('Status atualizado com sucesso.');
     } catch {
       this.notify.error('Não foi possível atualizar o status.');
