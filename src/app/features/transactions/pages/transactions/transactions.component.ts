@@ -103,7 +103,20 @@ export class TransactionsComponent implements OnInit {
       .reduce((sum, t) => sum + Number(t.amount), 0)
   );
 
-  readonly balance = computed(() => this.totalIncome() - this.totalExpense());
+  readonly realizedIncome = computed(() =>
+    this.filteredTransactions()
+      .filter(t => t.transaction_type === 'income' && t.status === 'paid')
+      .reduce((sum, t) => sum + Number(t.amount), 0)
+  );
+
+  readonly realizedExpense = computed(() =>
+    this.filteredTransactions()
+      .filter(t => t.transaction_type === 'expense' && t.status === 'paid')
+      .reduce((sum, t) => sum + Number(t.amount), 0)
+  );
+
+  readonly projectedBalance = computed(() => this.totalIncome() - this.totalExpense());
+  readonly realizedBalance = computed(() => this.realizedIncome() - this.realizedExpense());
 
   async ngOnInit(): Promise<void> {
     await this.loadData();

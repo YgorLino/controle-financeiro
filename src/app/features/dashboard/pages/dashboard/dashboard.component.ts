@@ -62,6 +62,17 @@ export class DashboardComponent implements OnInit {
     return Math.min(100, Math.round((s.total_expense / s.total_income) * 100));
   });
 
+  readonly realizedBalance = computed(() => {
+    const txns = this.transactionService.transactions();
+    const realizedIncome = txns
+      .filter(t => t.transaction_type === 'income' && t.status === 'paid')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    const realizedExpense = txns
+      .filter(t => t.transaction_type === 'expense' && t.status === 'paid')
+      .reduce((sum, t) => sum + Number(t.amount), 0);
+    return realizedIncome - realizedExpense;
+  });
+
   // Doughnut: despesas por categoria
   readonly doughnutData = computed<ChartData<'doughnut'>>(() => {
     const txns = this.transactionService.transactions()

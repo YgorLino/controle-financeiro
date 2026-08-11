@@ -44,16 +44,16 @@
             </div>
           </div>
 
-          <div class="summary-card balance" [class.positive]="(summary()?.balance ?? 0) >= 0" [class.negative]="(summary()?.balance ?? 0) < 0">
+          <div class="summary-card balance" [class.positive]="realizedBalance() >= 0" [class.negative]="realizedBalance() < 0">
             <div class="card-icon">
-              <mat-icon>account_balance_wallet</mat-icon>
+              <mat-icon>account_balance</mat-icon>
             </div>
             <div class="card-info">
-              <span class="card-label">Saldo do Mês</span>
-              <span class="card-value" [class.income-value]="(summary()?.balance ?? 0) >= 0" [class.expense-value]="(summary()?.balance ?? 0) < 0">
-                {{ summary()?.balance | currencyBr }}
+              <span class="card-label">Saldo Atual</span>
+              <span class="card-value" [class.income-value]="realizedBalance() >= 0" [class.expense-value]="realizedBalance() < 0">
+                {{ realizedBalance() | currencyBr }}
               </span>
-              <span class="card-sub">Entradas − Saídas</span>
+              <span class="card-sub">Realizado (Entradas − Saídas)</span>
             </div>
           </div>
 

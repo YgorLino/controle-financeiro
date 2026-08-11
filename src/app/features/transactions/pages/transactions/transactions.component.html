@@ -33,17 +33,22 @@
         <div class="total-item income">
           <mat-icon>trending_up</mat-icon>
           <span>{{ totalIncome() | currencyBr }}</span>
-          <small>Entradas</small>
+          <small>Entradas (Previstas)</small>
         </div>
         <div class="total-item expense">
           <mat-icon>trending_down</mat-icon>
           <span>{{ totalExpense() | currencyBr }}</span>
-          <small>Saídas</small>
+          <small>Saídas (Previstas)</small>
         </div>
-        <div class="total-item balance" [class.negative]="balance() < 0">
+        <div class="total-item balance realized" [class.negative]="realizedBalance() < 0">
+          <mat-icon>account_balance</mat-icon>
+          <span>{{ realizedBalance() | currencyBr }}</span>
+          <small>Saldo Atual</small>
+        </div>
+        <div class="total-item balance projected" [class.negative]="projectedBalance() < 0">
           <mat-icon>account_balance_wallet</mat-icon>
-          <span>{{ balance() | currencyBr }}</span>
-          <small>Saldo</small>
+          <span>{{ projectedBalance() | currencyBr }}</span>
+          <small>Saldo Previsto</small>
         </div>
         <button mat-stroked-button class="copy-btn" (click)="copyPreviousMonth()">
           <mat-icon>content_copy</mat-icon>
