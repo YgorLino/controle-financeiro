@@ -2,6 +2,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme.service';
+import { AutoLogoutService } from './core/services/auto-logout.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,7 @@ import { ThemeService } from './core/services/theme.service';
 })
 export class AppComponent implements OnInit {
   private readonly themeService = inject(ThemeService);
+  private readonly autoLogoutService = inject(AutoLogoutService); // Initialize auto logout
 
   ngOnInit(): void {
     // ThemeService se auto-inicializa via effect() no construtor
