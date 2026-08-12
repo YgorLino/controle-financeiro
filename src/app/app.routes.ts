@@ -5,7 +5,8 @@ import { authGuard, guestGuard, subscriptionGuard } from './core/guards/auth.gua
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    loadComponent: () => import('./features/public/pages/landing/landing.component')
+      .then(m => m.LandingPageComponent),
     pathMatch: 'full'
   },
   {

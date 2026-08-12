@@ -15,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ThemeService, Theme } from '../../../../core/services/theme.service';
+import { AccessService } from '../../../../core/services/access.service';
 
 function passwordMatchValidator(control: AbstractControl) {
   const pass = control.get('newPassword')?.value;
@@ -36,10 +37,11 @@ function passwordMatchValidator(control: AbstractControl) {
   styleUrl: './settings.component.scss'
 })
 export class SettingsComponent implements OnInit {
+  private readonly formBuilder = inject(FormBuilder);
   private readonly auth = inject(AuthService);
-  private readonly notify = inject(NotificationService);
   private readonly themeService = inject(ThemeService);
-  private readonly fb = inject(FormBuilder);
+  private readonly notify = inject(NotificationService);
+  public readonly accessService = inject(AccessService);
 
   readonly profileLoading = signal(false);
   readonly passwordLoading = signal(false);
@@ -47,12 +49,12 @@ export class SettingsComponent implements OnInit {
 
   readonly currentTheme = this.themeService.theme;
 
-  readonly profileForm = this.fb.group({
+  readonly profileForm = this.formBuilder.group({
     name: ['', Validators.required],
     email: [{ value: '', disabled: true }]
   });
 
-  readonly passwordForm = this.fb.group({
+  readonly passwordForm = this.formBuilder.group({
     newPassword: ['', [Validators.required, Validators.minLength(6)]],
     confirmPassword: ['', Validators.required]
   }, { validators: passwordMatchValidator });

@@ -2,6 +2,10 @@
       <div class="auth-header">
         <h2>Criar conta</h2>
         <p>Comece a organizar suas finanças hoje</p>
+        <div class="trial-badge" style="margin-top: 16px; background-color: #ecfdf5; color: #059669; padding: 12px; border-radius: 8px; font-size: 0.875rem; text-align: left; display: flex; flex-direction: column; gap: 4px; border: 1px solid #10b981;">
+          <strong><span class="material-icons-outlined" style="font-size: 16px; vertical-align: middle;">card_giftcard</span> 3 dias grátis</strong>
+          <span>Sem cartão. Acesso completo. Nenhuma cobrança automática.</span>
+        </div>
       </div>
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">

@@ -1,7 +1,8 @@
 // src/app/core/guards/auth.guard.ts
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { Router, type CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { AccessService } from '../services/access.service';
 
 export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
@@ -56,10 +57,21 @@ export const subscriptionGuard: CanActivateFn = async () => {
 
   if (!auth.isAuthenticated()) return router.createUrlTree(['/auth/login']);
 
-  const profile = auth.profile();
-  if (profile?.subscription_status === 'active') {
+  const access = inject(AccessService);
+
+  if (access.loading()) {
+    await new Promise<void>(resolve => {
+      const check = () => {
+        if (!access.loading()) { resolve(); }
+        else { setTimeout(check, 50); }
+      };
+      check();
+    });
+  }
+
+  if (access.hasValidAccess()) {
     return true;
   }
 
-  return router.createUrlTree(['/subscription']);
+  return router.createUrlTree(['/subscription'], { queryParams: { reason: 'trial-ended' }});
 };

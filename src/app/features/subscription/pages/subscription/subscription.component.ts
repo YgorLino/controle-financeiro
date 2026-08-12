@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SubscriptionService, PixPaymentResponse } from '../../../../core/services/subscription.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { AccessService } from '../../../../core/services/access.service';
 
 @Component({
   selector: 'app-subscription',
@@ -28,6 +29,7 @@ export class SubscriptionComponent implements OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly notify = inject(NotificationService);
   private readonly router = inject(Router);
+  public readonly accessService = inject(AccessService);
 
   readonly loading = signal(false);
   readonly pixData = signal<PixPaymentResponse | null>(null);

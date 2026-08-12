@@ -84,20 +84,28 @@ serve(async (req: Request) => {
       // Calcula os dias a adicionar
       const daysToAdd = planType === 'annual' ? 365 : 30
       
-      // Buscar a data de expiração atual para ver se soma a partir de hoje ou do futuro
+      // Buscar a data de expiração e o trial atual para ver se soma a partir de hoje ou do futuro
       const { data: profile } = await supabaseAdmin
         .from('profiles')
-        .select('subscription_expires_at')
+        .select('subscription_expires_at, trial_ends_at')
         .eq('id', userId)
         .single()
 
       let newExpiration = new Date()
-      if (profile && profile.subscription_expires_at) {
-        const currentExp = new Date(profile.subscription_expires_at)
-        if (currentExp > newExpiration) {
-          // Se ainda tem dias sobrando, soma a partir do vencimento futuro
-          newExpiration = currentExp
+      if (profile) {
+        let maxDate = newExpiration.getTime()
+        
+        if (profile.subscription_expires_at) {
+          const currentExp = new Date(profile.subscription_expires_at).getTime()
+          if (currentExp > maxDate) maxDate = currentExp
         }
+        
+        if (profile.trial_ends_at) {
+          const trialExp = new Date(profile.trial_ends_at).getTime()
+          if (trialExp > maxDate) maxDate = trialExp
+        }
+        
+        newExpiration = new Date(maxDate)
       }
       
       // Adicionar os dias

@@ -36,7 +36,10 @@
               {{ userInitial() }}
             </div>
             <div class="user-details">
-              <span class="user-name">{{ userName() }}</span>
+              <span class="user-name">
+                {{ userName() }}
+                <span class="trial-badge-small" *ngIf="isTrial">Teste grátis</span>
+              </span>
               <span class="user-email">{{ userEmail() }}</span>
             </div>
             <mat-icon class="expand-icon">expand_more</mat-icon>
@@ -62,6 +65,19 @@
 
       <!-- Main content -->
       <mat-sidenav-content class="main-content">
+        
+        <!-- Trial Banner -->
+        <div class="trial-banner" *ngIf="isTrial" [class.warning]="isTrialWarning" aria-live="polite">
+          <div class="banner-content">
+            <span class="material-icons-outlined">info</span>
+            <div class="banner-text">
+              <strong>Você está no período grátis.</strong> Restam {{ trialTimeRemaining }} para testar todos os recursos.
+              <span class="hide-mobile">Nenhuma cobrança será realizada automaticamente.</span>
+            </div>
+          </div>
+          <a routerLink="/subscription" mat-stroked-button class="banner-btn">Assinar agora</a>
+        </div>
+
         <!-- Mobile topbar -->
         <mat-toolbar class="mobile-toolbar" *ngIf="isMobile()">
           <button mat-icon-button (click)="sidenav.toggle()">

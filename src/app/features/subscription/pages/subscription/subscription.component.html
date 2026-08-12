@@ -1,8 +1,13 @@
 <div class="subscription-container fade-up">
   <div class="subscription-header">
-    <mat-icon class="logo-icon">account_balance_wallet</mat-icon>
-    <h1>Controle Financeiro Premium</h1>
-    <p>Sua assinatura expirou ou ainda não foi ativada.<br>Escolha um plano para continuar usando o sistema.</p>
+    <mat-icon class="logo-icon" *ngIf="!accessService.isTrial()">account_balance_wallet</mat-icon>
+    <mat-icon class="logo-icon" *ngIf="accessService.isTrial()" style="color: #10B981">card_giftcard</mat-icon>
+    
+    <h1 *ngIf="accessService.isTrial()">Seu teste grátis está ativo</h1>
+    <p *ngIf="accessService.isTrial()">Você pode utilizar todos os recursos. Assine agora e continue sem interrupções após o fim do teste.</p>
+    
+    <h1 *ngIf="!accessService.isTrial()">Seu acesso terminou</h1>
+    <p *ngIf="!accessService.isTrial()">Seus dados continuam salvos. Escolha um plano para retomar o acesso e continuar organizando suas finanças.</p>
   </div>
 
   <div *ngIf="loading()" class="loading-state">

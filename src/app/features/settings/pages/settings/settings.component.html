@@ -114,6 +114,49 @@
           </mat-button-toggle-group>
         </div>
 
+        <!-- Assinatura -->
+        <div class="cm-card settings-section">
+          <h2 class="cm-section-title">
+            <mat-icon>card_membership</mat-icon>
+            Plano e assinatura
+          </h2>
+
+          <p class="section-hint" *ngIf="accessService.isTrial()">
+            Você está usando o <strong>Teste Grátis</strong>.
+          </p>
+          
+          <p class="section-hint" *ngIf="accessService.isPaid()">
+            Você tem uma assinatura <strong>Ativa</strong>.
+          </p>
+          
+          <p class="section-hint" *ngIf="accessService.isExpired()">
+            Seu acesso está <strong>Expirado</strong>.
+          </p>
+
+          <div class="user-meta" style="margin-top: 16px;">
+            <div>
+              <p class="user-since" *ngIf="accessService.isTrial()">Término do teste em</p>
+              <p class="user-since" *ngIf="!accessService.isTrial()">Vencimento da assinatura em</p>
+              
+              <p class="user-date" *ngIf="accessService.isTrial()">
+                {{ accessService.accessStatus()?.trial_ends_at | date:'dd/MM/yyyy HH:mm' }}
+              </p>
+              
+              <p class="user-date" *ngIf="!accessService.isTrial() && accessService.accessStatus()?.subscription_expires_at">
+                {{ accessService.accessStatus()?.subscription_expires_at | date:'dd/MM/yyyy' }}
+              </p>
+              
+              <p class="user-date" *ngIf="!accessService.isTrial() && !accessService.accessStatus()?.subscription_expires_at">
+                Não assinante
+              </p>
+            </div>
+          </div>
+
+          <a mat-flat-button color="primary" routerLink="/subscription" class="save-btn" style="margin-top: 24px; text-decoration: none;">
+            Gerenciar assinatura
+          </a>
+        </div>
+
         <!-- Conta -->
         <div class="cm-card settings-section danger-zone">
           <h2 class="cm-section-title">

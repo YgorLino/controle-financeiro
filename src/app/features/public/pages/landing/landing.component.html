@@ -1,0 +1,373 @@
+<!-- src/app/features/public/pages/landing/landing.component.html -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+<header class="header" [class.scrolled]="isScrolled">
+  <div class="header-container">
+    <a href="/" class="logo">
+      <span class="icon material-icons-outlined">account_balance_wallet</span>
+      Controle Financeiro
+    </a>
+
+    <nav class="nav-desktop">
+      <a href="#recursos">Recursos</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#precos">Preços</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+
+    <div class="actions-desktop" *ngIf="!auth.isAuthenticated()">
+      <a routerLink="/auth/login" class="btn-secondary">Entrar</a>
+      <a routerLink="/auth/register" class="btn-primary">Experimentar grátis</a>
+    </div>
+
+    <div class="actions-desktop" *ngIf="auth.isAuthenticated()">
+      <a routerLink="/dashboard" class="btn-primary">Ir para o painel</a>
+    </div>
+
+    <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+      <span class="material-icons-outlined">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" *ngIf="isMobileMenuOpen">
+  <a href="#recursos" (click)="toggleMobileMenu()">Recursos</a>
+  <a href="#como-funciona" (click)="toggleMobileMenu()">Como funciona</a>
+  <a href="#precos" (click)="toggleMobileMenu()">Preços</a>
+  <a href="#duvidas" (click)="toggleMobileMenu()">Dúvidas</a>
+  
+  <div class="actions-mobile" *ngIf="!auth.isAuthenticated()">
+    <a routerLink="/auth/login" class="btn-secondary btn" (click)="toggleMobileMenu()">Entrar</a>
+    <a routerLink="/auth/register" class="btn-primary btn" (click)="toggleMobileMenu()">Experimentar grátis</a>
+  </div>
+  <div class="actions-mobile" *ngIf="auth.isAuthenticated()">
+    <a routerLink="/dashboard" class="btn-primary btn" (click)="toggleMobileMenu()">Ir para o painel</a>
+  </div>
+</div>
+
+<main>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="section-container">
+      <h1>Seu dinheiro, finalmente, <span class="text-gradient">faz sentido.</span></h1>
+      <p class="subtitle">Registre entradas e saídas, acompanhe o que já foi pago e descubra quanto realmente sobra — em um painel simples, direto e feito para a sua rotina.</p>
+      
+      <div class="hero-actions">
+        <a routerLink="/auth/register" class="btn-primary">Experimentar grátis por 3 dias</a>
+        <a href="#como-funciona" class="btn-secondary">Ver como funciona</a>
+      </div>
+      <p class="microcopy"><span class="material-icons-outlined icon">check_circle</span> Sem cartão. Acesso completo. Nenhuma cobrança automática.</p>
+      
+      <div class="hero-mockup">
+        <div class="browser-frame">
+          <div class="browser-header">
+            <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          </div>
+          <!-- TODO: Usuário deve colocar a imagem real em src/assets/marketing/dashboard-desktop.webp -->
+          <!-- Placeholder temporário. -->
+          <img src="assets/marketing/dashboard-desktop.webp" alt="Interface principal mostrando saldo e gráficos" onerror="this.src='https://placehold.co/1200x800/f1f5f9/cbd5e1?text=Dashboard+Desktop'">
+        </div>
+        
+        <div class="mobile-mockup">
+          <!-- TODO: Usuário deve colocar a imagem real em src/assets/marketing/dashboard-mobile.webp -->
+          <!-- Placeholder temporário -->
+          <img src="assets/marketing/dashboard-mobile.webp" alt="Visão do painel no celular" onerror="this.src='https://placehold.co/375x812/f1f5f9/cbd5e1?text=Mobile'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits (Bento) -->
+  <section id="recursos" class="benefits">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Feito para a sua vida financeira real</h2>
+        <p>Esqueça planilhas complexas. Criamos uma ferramenta para você entender seu mês sem perder horas configurando relatórios.</p>
+      </div>
+
+      <div class="bento-grid">
+        <div class="bento-card large">
+          <div class="icon-wrapper">
+            <span class="material-icons-outlined">insert_chart_outlined</span>
+          </div>
+          <h3>Entenda seu mês em segundos</h3>
+          <p>Entradas, saídas, saldo atual e contas pendentes reunidos em uma única visão clara e objetiva. Chega de surpresas no fim do mês.</p>
+        </div>
+
+        <div class="bento-card">
+          <div class="icon-wrapper green">
+            <span class="material-icons-outlined">event_note</span>
+          </div>
+          <h3>Não esqueça mais uma conta</h3>
+          <p>Cadastre despesas recorrentes, compras parceladas e vencimentos futuros e seja avisado do que falta pagar.</p>
+        </div>
+
+        <div class="bento-card">
+          <div class="icon-wrapper green">
+            <span class="material-icons-outlined">check_circle_outline</span>
+          </div>
+          <h3>Saiba o que já foi pago</h3>
+          <p>Separe contas pagas, pendentes e atrasadas sem depender de anotações confusas em planilhas.</p>
+        </div>
+
+        <div class="bento-card large">
+          <div class="icon-wrapper">
+            <span class="material-icons-outlined">trending_up</span>
+          </div>
+          <h3>Planeje antes de gastar</h3>
+          <p>Veja o saldo atual, o saldo previsto e descubra exatamente quanto da sua renda já está comprometido com as contas cadastradas.</p>
+        </div>
+
+        <div class="bento-card">
+          <div class="icon-wrapper green">
+            <span class="material-icons-outlined">palette</span>
+          </div>
+          <h3>Tudo organizado do seu jeito</h3>
+          <p>Crie categorias personalizadas com cores e ícones para identificar rapidamente para onde o seu dinheiro está indo.</p>
+        </div>
+
+        <div class="bento-card">
+          <div class="icon-wrapper">
+            <span class="material-icons-outlined">smartphone</span>
+          </div>
+          <h3>Acesse onde estiver</h3>
+          <p>Interface responsiva pensada para funcionar com a mesma fluidez tanto no computador quanto na tela do seu celular.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo Tabs -->
+  <section class="demo bg-light">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Conheça a plataforma por dentro</h2>
+        <p>Um ambiente seguro, limpo e direto ao ponto para organizar suas finanças.</p>
+      </div>
+
+      <div class="demo-layout">
+        <div class="demo-tabs">
+          <button [class.active]="activeDemoTab === 'visao'" (click)="setDemoTab('visao')">
+            <h4>Visão geral</h4>
+            <p>Entradas e saídas; Saldo atual; Valores pagos e pendentes; Renda comprometida; Despesas por categoria e Gráfico de resumo.</p>
+          </button>
+          
+          <button [class.active]="activeDemoTab === 'movimentacoes'" (click)="setDemoTab('movimentacoes')">
+            <h4>Movimentações</h4>
+            <p>Adicionar entradas/saídas, filtrar por mês, saldo atual x previsto, ações em lote, exportar CSV e muito mais.</p>
+          </button>
+          
+          <button [class.active]="activeDemoTab === 'recorrencias'" (click)="setDemoTab('recorrencias')">
+            <h4>Recorrências</h4>
+            <p>Assinaturas fixas, compras parceladas e geração automática de lançamentos mensais, semanais ou anuais.</p>
+          </button>
+
+          <button [class.active]="activeDemoTab === 'categorias'" (click)="setDemoTab('categorias')">
+            <h4>Categorias</h4>
+            <p>Separe despesas de receitas. Aplique cores vibrantes e personalize a taxonomia do seu orçamento.</p>
+          </button>
+        </div>
+
+        <div class="demo-content">
+          <!-- TODO: Usuário deve colocar a imagem real em src/assets/marketing/... -->
+          <img *ngIf="activeDemoTab === 'visao'" src="assets/marketing/demo-visao.webp" alt="Demonstração da visão geral" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Visao+Geral'">
+          <img *ngIf="activeDemoTab === 'movimentacoes'" src="assets/marketing/demo-movimentacoes.webp" alt="Demonstração de movimentações" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Movimentacoes'">
+          <img *ngIf="activeDemoTab === 'recorrencias'" src="assets/marketing/demo-recorrencias.webp" alt="Demonstração de recorrências" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Recorrencias'">
+          <img *ngIf="activeDemoTab === 'categorias'" src="assets/marketing/demo-categorias.webp" alt="Demonstração de categorias" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Categorias'">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="como-funciona" class="how-it-works">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Comece a controlar o seu dinheiro hoje</h2>
+        <p>Não há tempo a perder. Criamos um processo rápido para você entrar e começar a organizar.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Crie sua conta</h3>
+          <p>Cadastre-se gratuitamente em segundos, sem informar cartão de crédito.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Adicione sua rotina</h3>
+          <p>Registre entradas, despesas, vencimentos e automatize recorrências.</p>
+        </div>
+        
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Acompanhe a sobra</h3>
+          <p>Veja seu mês com clareza e tome decisões de gasto com mais segurança.</p>
+        </div>
+      </div>
+
+      <div class="how-cta">
+        <a routerLink="/auth/register" class="btn-primary">Começar meus 3 dias grátis</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="precos" class="pricing bg-light">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Planos simples, diretos e sem surpresas</h2>
+        <p>Experimente grátis. Se não for para você, cancele antes de pagar qualquer coisa.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Teste -->
+        <div class="price-card">
+          <h3 class="plan-name">Teste Gratuito</h3>
+          <div class="price">
+            <span class="currency">R$</span>0<span class="period"></span>
+          </div>
+          <div class="savings">Sem compromisso</div>
+          
+          <ul class="features">
+            <li><span class="material-icons-outlined">check</span> 3 dias de acesso completo</li>
+            <li><span class="material-icons-outlined">check</span> Sem precisar de cartão</li>
+            <li><span class="material-icons-outlined">check</span> Sem cobrança automática</li>
+            <li><span class="material-icons-outlined">check</span> Todos os recursos disponíveis</li>
+          </ul>
+          
+          <a routerLink="/auth/register" class="btn-outline">Experimentar grátis</a>
+        </div>
+
+        <!-- Anual -->
+        <div class="price-card highlight">
+          <div class="badge">Melhor custo-benefício</div>
+          <h3 class="plan-name">Plano Anual</h3>
+          <div class="price">
+            <span class="currency">R$</span>80<span class="period">/ano</span>
+          </div>
+          <div class="savings">Economize R$ 38,80 por ano</div>
+          
+          <ul class="features">
+            <li><span class="material-icons-outlined">check</span> Equivalente a R$ 6,67 por mês</li>
+            <li><span class="material-icons-outlined">check</span> Acesso completo por 365 dias</li>
+            <li><span class="material-icons-outlined">check</span> Sem renovação automática</li>
+            <li><span class="material-icons-outlined">check</span> Pagamento fácil e seguro via PIX</li>
+          </ul>
+          
+          <a routerLink="/auth/register" class="btn-primary">Assinar anual</a>
+        </div>
+
+        <!-- Mensal -->
+        <div class="price-card">
+          <h3 class="plan-name">Plano Mensal</h3>
+          <div class="price">
+            <span class="currency">R$</span>9,90<span class="period">/mês</span>
+          </div>
+          <div class="savings">Acesso de curto prazo</div>
+          
+          <ul class="features">
+            <li><span class="material-icons-outlined">check</span> Acesso completo por 30 dias</li>
+            <li><span class="material-icons-outlined">check</span> Sem renovação automática</li>
+            <li><span class="material-icons-outlined">check</span> Pagamento fácil e seguro via PIX</li>
+          </ul>
+          
+          <a routerLink="/auth/register" class="btn-outline">Assinar mensal</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="duvidas" class="faq">
+    <div class="section-container">
+      <div class="section-header">
+        <h2>Dúvidas frequentes</h2>
+      </div>
+
+      <div class="faq-grid">
+        <div class="faq-item">
+          <h4>Preciso cadastrar cartão para testar?</h4>
+          <p>Não. O teste gratuito dura 3 dias e não solicita cartão. Você só realiza o pagamento via PIX se decidir assinar após esse período.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h4>Vou receber alguma cobrança automática?</h4>
+          <p>Não. Ao final do teste, você decide ativamente se deseja assinar e realiza o pagamento via PIX. Não guardamos dados do seu cartão ou conta.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h4>O que acontece depois dos 3 dias?</h4>
+          <p>O acesso às funcionalidades fica pausado, mas seus dados permanecem seguros e salvos. Ao assinar, você continua exatamente de onde parou.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h4>Posso usar no celular?</h4>
+          <p>Sim. O sistema possui uma interface responsiva projetada especificamente para funcionar tão bem no celular quanto no computador.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h4>Quais recursos estão incluídos?</h4>
+          <p>Dashboard analítico, movimentações por mês, criação de categorias personalizadas, recorrências, acompanhamento de contas pagas e pendentes, além de exportação CSV de todos os dados.</p>
+        </div>
+        
+        <div class="faq-item">
+          <h4>Como funciona o pagamento?</h4>
+          <p>O pagamento é realizado exclusivamente via PIX através do Mercado Pago. Depois da confirmação, que geralmente leva segundos, o acesso é liberado automaticamente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <div class="section-container">
+      <h2>Três dias podem mudar a forma como você enxerga seu dinheiro.</h2>
+      <p>Experimente todos os recursos, sem cartão e sem compromisso.</p>
+      
+      <a routerLink="/auth/register" class="btn-white">Criar minha conta grátis</a>
+      <span class="microcopy">Você só paga se decidir continuar.</span>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="brand">
+      <a href="/" class="logo">
+        <span class="icon material-icons-outlined">account_balance_wallet</span>
+        Controle Financeiro
+      </a>
+      <p>A ferramenta mais simples e direta para você assumir o controle do seu dinheiro sem complicação.</p>
+    </div>
+    
+    <div class="links-column">
+      <h4>Produto</h4>
+      <ul>
+        <li><a href="#recursos">Recursos</a></li>
+        <li><a href="#precos">Preços e planos</a></li>
+        <li><a routerLink="/auth/login">Entrar</a></li>
+        <li><a routerLink="/auth/register">Cadastrar gratuitamente</a></li>
+      </ul>
+    </div>
+    
+    <div class="links-column">
+      <h4>Dúvidas & Ajuda</h4>
+      <ul>
+        <li><a href="#como-funciona">Como funciona</a></li>
+        <li><a href="#duvidas">FAQ</a></li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="footer-bottom">
+    <div class="copyright">
+      &copy; {{ currentYear }} Controle Financeiro. Todos os direitos reservados.
+    </div>
+    <div class="links">
+      <a href="#">Termos de Uso</a>
+      <a href="#">Política de Privacidade</a>
+    </div>
+  </div>
+</footer>

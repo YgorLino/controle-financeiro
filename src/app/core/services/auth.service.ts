@@ -98,7 +98,7 @@ export class AuthService {
     if (error) throw error;
   }
 
-  async updateProfile(updates: Partial<Profile>): Promise<void> {
+  async updateProfile(updates: Partial<Pick<Profile, 'name' | 'avatar_url' | 'theme'>>): Promise<void> {
     const user = this.currentUser();
     if (!user) throw new Error('Usuário não autenticado');
 

@@ -16,6 +16,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../core/services/auth.service';
 import { ThemeService } from '../../core/services/theme.service';
 
+import { AccessService } from '../../core/services/access.service';
+
 interface NavItem {
   path: string;
   label: string;
@@ -37,6 +39,7 @@ interface NavItem {
 export class MainLayoutComponent {
   private readonly auth = inject(AuthService);
   private readonly themeService = inject(ThemeService);
+  public readonly accessService = inject(AccessService);
 
   readonly isMobile = signal(window.innerWidth < 768);
 
@@ -57,6 +60,23 @@ export class MainLayoutComponent {
   userEmail = () => this.auth.profile()?.email ?? '';
   userInitial = () => (this.auth.profile()?.name ?? 'U').charAt(0).toUpperCase();
   isDark = () => this.themeService.theme() === 'dark';
+
+  // Helper getters for template
+  get isTrial() { return this.accessService.isTrial(); }
+  
+  get trialTimeRemaining() {
+    const ms = this.accessService.accessStatus()?.time_remaining_ms ?? 0;
+    if (ms <= 0) return 'Expirado';
+    const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    if (days > 0) return `${days} dias e ${hours} horas`;
+    return `${hours} horas`;
+  }
+  
+  get isTrialWarning() {
+    const ms = this.accessService.accessStatus()?.time_remaining_ms ?? 0;
+    return ms > 0 && ms <= 24 * 60 * 60 * 1000; // Less than 24h
+  }
 
   toggleTheme(): void {
     this.themeService.setTheme(this.isDark() ? 'light' : 'dark');
