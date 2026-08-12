@@ -34,7 +34,8 @@ export class SubscriptionComponent implements OnDestroy {
   readonly loading = signal(false);
   readonly pixData = signal<PixPaymentResponse | null>(null);
   
-  private pollingInterval: any;
+  private pollingInterval: ReturnType<typeof setInterval> | null = null;
+  private pollingInProgress = false;
 
   async selectPlan(plan: 'monthly' | 'annual') {
     this.loading.set(true);
@@ -69,16 +70,28 @@ export class SubscriptionComponent implements OnDestroy {
 
   private startPolling() {
     this.stopPolling();
-    // Verifica a cada 5 segundos se o status da assinatura mudou
-    this.pollingInterval = setInterval(async () => {
+    void this.checkPaymentStatus();
+    this.pollingInterval = setInterval(() => void this.checkPaymentStatus(), 5000);
+  }
+
+  private async checkPaymentStatus(): Promise<void> {
+    if (this.pollingInProgress) return;
+    this.pollingInProgress = true;
+
+    try {
+      await this.accessService.refreshAccessStatus();
+      if (!this.accessService.isPaid()) return;
+
       await this.auth.reloadProfile();
-      const profile = this.auth.profile();
-      if (profile?.subscription_status === 'active') {
-        this.stopPolling();
-        this.notify.success('Pagamento confirmado! Bem-vindo(a) ao Premium.');
-        this.router.navigate(['/dashboard']);
-      }
-    }, 5000);
+      this.stopPolling();
+      this.pixData.set(null);
+      this.notify.success('Pagamento confirmado! Bem-vindo(a) ao Premium.');
+      await this.router.navigate(['/dashboard']);
+    } catch (error) {
+      console.error('Error checking payment status:', error);
+    } finally {
+      this.pollingInProgress = false;
+    }
   }
 
   private stopPolling() {

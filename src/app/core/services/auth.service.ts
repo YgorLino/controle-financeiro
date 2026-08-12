@@ -25,16 +25,27 @@ export class AuthService {
   }
 
   private async initialize(): Promise<void> {
-    const { data: { session } } = await this.supabase.client.auth.getSession();
-    this._session.set(session);
-    if (session?.user) await this.reloadProfile();
-    this._loading.set(false);
+    try {
+      const { data: { session }, error } = await this.supabase.client.auth.getSession();
+      if (error) throw error;
+
+      this._session.set(session);
+      if (session?.user) await this.reloadProfile();
+    } catch (error) {
+      console.error('Error initializing authentication:', error);
+      this._session.set(null);
+      this._profile.set(null);
+    } finally {
+      // Guards must never wait forever if session recovery fails.
+      this._loading.set(false);
+    }
 
     this.supabase.client.auth.onAuthStateChange(
-      async (event: AuthChangeEvent, session: Session | null) => {
+      (_event: AuthChangeEvent, session: Session | null) => {
         this._session.set(session);
         if (session?.user) {
-          await this.reloadProfile();
+          // Avoid calling another Supabase method from inside the auth callback.
+          window.setTimeout(() => void this.reloadProfile(), 0);
         } else {
           this._profile.set(null);
         }

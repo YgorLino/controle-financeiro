@@ -65,16 +65,18 @@ export class MainLayoutComponent {
   get isTrial() { return this.accessService.isTrial(); }
   
   get trialTimeRemaining() {
-    const ms = this.accessService.accessStatus()?.time_remaining_ms ?? 0;
+    const ms = this.accessService.remainingTimeMs();
     if (ms <= 0) return 'Expirado';
     const days = Math.floor(ms / (1000 * 60 * 60 * 24));
     const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.max(1, Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60)));
     if (days > 0) return `${days} dias e ${hours} horas`;
-    return `${hours} horas`;
+    if (hours > 0) return `${hours} horas e ${minutes} minutos`;
+    return `${minutes} minutos`;
   }
   
   get isTrialWarning() {
-    const ms = this.accessService.accessStatus()?.time_remaining_ms ?? 0;
+    const ms = this.accessService.remainingTimeMs();
     return ms > 0 && ms <= 24 * 60 * 60 * 1000; // Less than 24h
   }
 

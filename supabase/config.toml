@@ -1,0 +1,9 @@
+project_id = "controle-financeiro"
+
+[functions.create-payment]
+verify_jwt = true
+
+[functions.payment-webhook]
+# Mercado Pago calls this endpoint without a Supabase JWT.
+# Authenticity is validated inside the function through x-signature.
+verify_jwt = false

@@ -6,8 +6,11 @@
     <h1 *ngIf="accessService.isTrial()">Seu teste grátis está ativo</h1>
     <p *ngIf="accessService.isTrial()">Você pode utilizar todos os recursos. Assine agora e continue sem interrupções após o fim do teste.</p>
     
-    <h1 *ngIf="!accessService.isTrial()">Seu acesso terminou</h1>
-    <p *ngIf="!accessService.isTrial()">Seus dados continuam salvos. Escolha um plano para retomar o acesso e continuar organizando suas finanças.</p>
+    <h1 *ngIf="accessService.isPaid()">Sua assinatura está ativa</h1>
+    <p *ngIf="accessService.isPaid()">Você pode renovar agora e o novo período será acrescentado ao vencimento atual.</p>
+
+    <h1 *ngIf="accessService.isExpired()">Seu acesso terminou</h1>
+    <p *ngIf="accessService.isExpired()">Seus dados continuam salvos. Escolha um plano para retomar o acesso e continuar organizando suas finanças.</p>
   </div>
 
   <div *ngIf="loading()" class="loading-state">
@@ -44,7 +47,7 @@
 
       <!-- Plano Anual -->
       <mat-card class="plan-card featured">
-        <div class="badge">Mais popular (30% OFF)</div>
+        <div class="badge">Mais popular (33% OFF)</div>
         <mat-card-header>
           <mat-card-title>Plano Anual</mat-card-title>
           <mat-card-subtitle>Acesso por 1 ano inteiro</mat-card-subtitle>
@@ -58,7 +61,7 @@
           <ul class="features">
             <li><mat-icon>check_circle</mat-icon> Tudo do plano mensal</li>
             <li><mat-icon>check_circle</mat-icon> Preço travado por 1 ano</li>
-            <li><mat-icon>check_circle</mat-icon> Desconto equivalente a 3 meses</li>
+            <li><mat-icon>check_circle</mat-icon> Economia de R$ 38,80 no ano</li>
           </ul>
         </mat-card-content>
         <mat-card-actions>
