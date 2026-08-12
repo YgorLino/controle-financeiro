@@ -349,10 +349,28 @@ section {
           &.y { background: #f59e0b; }
           &.g { background: #10b981; }
         }
+
+        .browser-label {
+          margin-left: auto;
+          color: $c-text-muted;
+          font-size: 0.6875rem;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+        }
       }
-      
+
+      .hero-tour {
+        display: block;
+        aspect-ratio: 960 / 548;
+        background: #09090b;
+        overflow: hidden;
+      }
+
       img, video {
         width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
         display: block;
       }
     }
@@ -504,10 +522,14 @@ section {
     border: 1px solid $c-border;
     overflow: hidden;
     box-shadow: $shadow-md;
+    aspect-ratio: 7 / 4;
     
     img {
       width: 100%;
-      height: auto;
+      height: 100%;
+      aspect-ratio: 7 / 4;
+      object-fit: cover;
+      object-position: top center;
       display: block;
     }
   }
