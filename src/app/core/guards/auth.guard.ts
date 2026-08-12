@@ -27,12 +27,12 @@ export const guestGuard: CanActivateFn = async () => {
 export const subscriptionGuard: CanActivateFn = async () => {
   const auth = inject(AuthService);
   const router = inject(Router);
+  const access = inject(AccessService);
 
   await auth.waitUntilReady();
 
   if (!auth.isAuthenticated()) return router.createUrlTree(['/auth/login']);
 
-  const access = inject(AccessService);
   await access.ensureInitialized();
 
   if (access.hasValidAccess()) {
