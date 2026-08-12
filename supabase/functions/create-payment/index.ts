@@ -14,6 +14,13 @@ serve(async (req: Request) => {
 
   try {
     const { plan } = await req.json()
+
+    if (plan !== 'monthly' && plan !== 'annual') {
+      return new Response(JSON.stringify({ error: 'Invalid plan' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      })
+    }
     
     // Obter o token JWT do header
     const authHeader = req.headers.get('Authorization')

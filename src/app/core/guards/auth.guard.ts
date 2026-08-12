@@ -58,16 +58,7 @@ export const subscriptionGuard: CanActivateFn = async () => {
   if (!auth.isAuthenticated()) return router.createUrlTree(['/auth/login']);
 
   const access = inject(AccessService);
-
-  if (access.loading()) {
-    await new Promise<void>(resolve => {
-      const check = () => {
-        if (!access.loading()) { resolve(); }
-        else { setTimeout(check, 50); }
-      };
-      check();
-    });
-  }
+  await access.ensureInitialized();
 
   if (access.hasValidAccess()) {
     return true;

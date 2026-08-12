@@ -3,6 +3,7 @@ import {
   Component, ChangeDetectionStrategy, OnInit, inject, signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -28,7 +29,7 @@ function passwordMatchValidator(control: AbstractControl) {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule, ReactiveFormsModule,
+    CommonModule, RouterLink, ReactiveFormsModule,
     MatFormFieldModule, MatInputModule, MatButtonModule,
     MatIconModule, MatDividerModule, MatProgressSpinnerModule,
     MatButtonToggleModule, MatTooltipModule
