@@ -166,7 +166,11 @@ export class TransactionsComponent implements OnInit {
         defaultMonth: this.transactionService.getReferenceMonthString(this.currentMonthDate())
       }
     });
-    // Dialog fechando com true = recarregar (já atualizado via signal)
+
+    ref.afterClosed().subscribe(saved => {
+      if (!saved) return;
+      void this.refreshAfterMutation(true);
+    });
   }
 
   confirmDelete(id: string): void {
@@ -183,10 +187,32 @@ export class TransactionsComponent implements OnInit {
       try {
         await this.transactionService.deleteTransaction(id);
         this.notify.success('Movimentação excluída com sucesso.');
+        await this.refreshAfterMutation();
       } catch {
         this.notify.error('Não foi possível excluir a movimentação.');
       }
     });
+  }
+
+  private async refreshTransactionsAndSummary(): Promise<void> {
+    const monthStr = this.transactionService.getReferenceMonthString(this.currentMonthDate());
+    const [_, summary] = await Promise.all([
+      this.transactionService.loadTransactions(monthStr),
+      this.transactionService.getDashboardSummary(monthStr)
+    ]);
+    this.summary.set(summary);
+  }
+
+  private async refreshAfterMutation(reloadTransactions = false): Promise<void> {
+    try {
+      if (reloadTransactions) {
+        await this.refreshTransactionsAndSummary();
+      } else {
+        await this.refreshSummary();
+      }
+    } catch {
+      this.notify.error('A alteração foi salva, mas não foi possível atualizar os totais. Atualize a página.');
+    }
   }
 
   private async refreshSummary(): Promise<void> {
@@ -253,6 +279,7 @@ export class TransactionsComponent implements OnInit {
     try {
       await this.transactionService.duplicateTransaction(t);
       this.notify.success('Movimentação duplicada com sucesso.');
+      await this.refreshAfterMutation();
     } catch {
       this.notify.error('Não foi possível duplicar a movimentação.');
     }
@@ -273,6 +300,7 @@ export class TransactionsComponent implements OnInit {
       try {
         const count = await this.transactionService.copyPreviousMonth(monthStr);
         this.notify.success(`${count} movimentação(ões) copiada(s) com sucesso.`);
+        await this.refreshAfterMutation();
       } catch {
         this.notify.error('Não foi possível copiar as movimentações.');
       }

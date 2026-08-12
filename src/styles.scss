@@ -25,9 +25,11 @@ body, .mat-typography {
 
 a { color: var(--cm-primary); text-decoration: none; }
 
-// Forçar família e visual moderno nos ícones
-mat-icon, .material-icons {
+// Forçar família e visual moderno nos ícones, inclusive nos elementos que
+// ainda usam a classe legada `material-icons-outlined`.
+mat-icon, .material-icons, .material-icons-outlined {
   font-family: 'Material Symbols Rounded' !important;
+  font-feature-settings: 'liga';
   font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
   overflow: visible !important; /* Evita que ícones fiquem "comidos" */
   display: inline-flex !important;

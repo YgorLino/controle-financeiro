@@ -54,15 +54,12 @@ serve(async (req: Request) => {
     }
 
     // Chamar API do Mercado Pago
-    const mpAccessToken = Deno.env.get('MP_ACCESS_TOKEN')
+    const mpAccessToken = Deno.env.get('MP_ACCESS_TOKEN')?.trim()
     if (!mpAccessToken) {
       throw new Error('Mercado Pago token not configured')
     }
 
     const idempotencyKey = crypto.randomUUID()
-    
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const notificationUrl = `${supabaseUrl}/functions/v1/payment-webhook`
 
     const mpResponse = await fetch('https://api.mercadopago.com/v1/payments', {
       method: 'POST',
@@ -78,8 +75,7 @@ serve(async (req: Request) => {
         payer: {
           email: user.email
         },
-        external_reference: `${user.id}___${planId}`,
-        notification_url: notificationUrl
+        external_reference: `${user.id}___${planId}`
       })
     })
 

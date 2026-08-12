@@ -20,26 +20,9 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this._session());
   readonly currentUser = computed(() => this._session()?.user ?? null);
 
+  private readonly initializationPromise: Promise<void>;
+
   constructor() {
-    this.initialize();
-  }
-
-  private async initialize(): Promise<void> {
-    try {
-      const { data: { session }, error } = await this.supabase.client.auth.getSession();
-      if (error) throw error;
-
-      this._session.set(session);
-      if (session?.user) await this.reloadProfile();
-    } catch (error) {
-      console.error('Error initializing authentication:', error);
-      this._session.set(null);
-      this._profile.set(null);
-    } finally {
-      // Guards must never wait forever if session recovery fails.
-      this._loading.set(false);
-    }
-
     this.supabase.client.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
         this._session.set(session);
@@ -51,6 +34,37 @@ export class AuthService {
         }
       }
     );
+
+    this.initializationPromise = this.initialize();
+  }
+
+  private async initialize(): Promise<void> {
+    let recoveredSession: Session | null = null;
+
+    try {
+      const { data: { session }, error } = await this.supabase.client.auth.getSession();
+      if (error) throw error;
+
+      recoveredSession = session;
+      this._session.set(session);
+    } catch (error) {
+      console.error('Error initializing authentication:', error);
+      this._session.set(null);
+      this._profile.set(null);
+    } finally {
+      // Guards must never wait forever if session recovery fails.
+      this._loading.set(false);
+    }
+
+    // Profile data is not required to decide which route the user can access.
+    // Load it in the background so a slow query cannot leave the app blank.
+    if (recoveredSession?.user) {
+      void this.reloadProfile();
+    }
+  }
+
+  async waitUntilReady(): Promise<void> {
+    await this.initializationPromise;
   }
 
   async reloadProfile(): Promise<void> {
