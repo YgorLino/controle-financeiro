@@ -114,28 +114,38 @@ GRANT EXECUTE ON FUNCTION public.start_free_trial() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.get_access_status() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.has_valid_access() TO authenticated;
 
--- Completa a mesma proteção do trial para as tabelas que ficaram de fora.
-DROP POLICY IF EXISTS "accounts: usuário cria apenas suas contas" ON public.accounts;
-CREATE POLICY "accounts: usuário cria apenas suas contas"
-    ON public.accounts FOR INSERT
-    WITH CHECK (auth.uid() = user_id AND public.has_valid_access());
+-- Completa a mesma proteção do trial para tabelas opcionais. Nem todas as
+-- instalações possuem contas ou cartões, então cada conjunto de políticas só
+-- é criado quando a respectiva tabela existe.
+DO $policies$
+BEGIN
+    IF to_regclass('public.accounts') IS NOT NULL THEN
+        EXECUTE 'DROP POLICY IF EXISTS "accounts: usuário cria apenas suas contas" ON public.accounts';
+        EXECUTE 'CREATE POLICY "accounts: usuário cria apenas suas contas"
+            ON public.accounts FOR INSERT
+            WITH CHECK (auth.uid() = user_id AND public.has_valid_access())';
 
-DROP POLICY IF EXISTS "accounts: usuário atualiza apenas suas contas" ON public.accounts;
-CREATE POLICY "accounts: usuário atualiza apenas suas contas"
-    ON public.accounts FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id AND public.has_valid_access());
+        EXECUTE 'DROP POLICY IF EXISTS "accounts: usuário atualiza apenas suas contas" ON public.accounts';
+        EXECUTE 'CREATE POLICY "accounts: usuário atualiza apenas suas contas"
+            ON public.accounts FOR UPDATE
+            USING (auth.uid() = user_id)
+            WITH CHECK (auth.uid() = user_id AND public.has_valid_access())';
+    END IF;
 
-DROP POLICY IF EXISTS "credit_cards: usuário cria apenas seus cartões" ON public.credit_cards;
-CREATE POLICY "credit_cards: usuário cria apenas seus cartões"
-    ON public.credit_cards FOR INSERT
-    WITH CHECK (auth.uid() = user_id AND public.has_valid_access());
+    IF to_regclass('public.credit_cards') IS NOT NULL THEN
+        EXECUTE 'DROP POLICY IF EXISTS "credit_cards: usuário cria apenas seus cartões" ON public.credit_cards';
+        EXECUTE 'CREATE POLICY "credit_cards: usuário cria apenas seus cartões"
+            ON public.credit_cards FOR INSERT
+            WITH CHECK (auth.uid() = user_id AND public.has_valid_access())';
 
-DROP POLICY IF EXISTS "credit_cards: usuário atualiza apenas seus cartões" ON public.credit_cards;
-CREATE POLICY "credit_cards: usuário atualiza apenas seus cartões"
-    ON public.credit_cards FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id AND public.has_valid_access());
+        EXECUTE 'DROP POLICY IF EXISTS "credit_cards: usuário atualiza apenas seus cartões" ON public.credit_cards';
+        EXECUTE 'CREATE POLICY "credit_cards: usuário atualiza apenas seus cartões"
+            ON public.credit_cards FOR UPDATE
+            USING (auth.uid() = user_id)
+            WITH CHECK (auth.uid() = user_id AND public.has_valid_access())';
+    END IF;
+END;
+$policies$;
 
 -- Registro imutável dos pagamentos aplicados. A chave primária impede que a
 -- mesma cobrança seja creditada duas vezes, inclusive em chamadas simultâneas.
