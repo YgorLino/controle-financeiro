@@ -60,16 +60,16 @@
         <div class="browser-frame">
           <div class="browser-header">
             <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+            <span class="browser-label">Demonstração com dados fictícios</span>
           </div>
-          <!-- TODO: Usuário deve colocar a imagem real em src/assets/marketing/dashboard-desktop.webp -->
-          <!-- Placeholder temporário. -->
-          <img src="assets/marketing/dashboard-desktop.webp" alt="Interface principal mostrando saldo e gráficos" onerror="this.src='https://placehold.co/1200x800/f1f5f9/cbd5e1?text=Dashboard+Desktop'">
+          <picture class="hero-tour">
+            <source media="(prefers-reduced-motion: reduce)" srcset="assets/marketing/dashboard-desktop.webp" type="image/webp">
+            <img src="assets/marketing/controle-financeiro-tour.gif" alt="Demonstração animada do dashboard, movimentações, recorrências e categorias" fetchpriority="high" decoding="async">
+          </picture>
         </div>
         
         <div class="mobile-mockup">
-          <!-- TODO: Usuário deve colocar a imagem real em src/assets/marketing/dashboard-mobile.webp -->
-          <!-- Placeholder temporário -->
-          <img src="assets/marketing/dashboard-mobile.webp" alt="Visão do painel no celular" onerror="this.src='https://placehold.co/375x812/f1f5f9/cbd5e1?text=Mobile'">
+          <img src="assets/marketing/dashboard-mobile.webp" alt="Visão responsiva do dashboard no celular" decoding="async">
         </div>
       </div>
     </div>
@@ -167,11 +167,10 @@
         </div>
 
         <div class="demo-content">
-          <!-- TODO: Usuário deve colocar a imagem real em src/assets/marketing/... -->
-          <img *ngIf="activeDemoTab === 'visao'" src="assets/marketing/demo-visao.webp" alt="Demonstração da visão geral" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Visao+Geral'">
-          <img *ngIf="activeDemoTab === 'movimentacoes'" src="assets/marketing/demo-movimentacoes.webp" alt="Demonstração de movimentações" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Movimentacoes'">
-          <img *ngIf="activeDemoTab === 'recorrencias'" src="assets/marketing/demo-recorrencias.webp" alt="Demonstração de recorrências" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Recorrencias'">
-          <img *ngIf="activeDemoTab === 'categorias'" src="assets/marketing/demo-categorias.webp" alt="Demonstração de categorias" onerror="this.src='https://placehold.co/800x600/ffffff/cbd5e1?text=Categorias'">
+          <img *ngIf="activeDemoTab === 'visao'" src="assets/marketing/demo-visao.webp" alt="Dashboard com resumo financeiro, saldo e gráficos" loading="lazy" decoding="async">
+          <img *ngIf="activeDemoTab === 'movimentacoes'" src="assets/marketing/demo-movimentacoes.webp" alt="Tela de movimentações com entradas, saídas, filtros e status" loading="lazy" decoding="async">
+          <img *ngIf="activeDemoTab === 'recorrencias'" src="assets/marketing/demo-recorrencias.webp" alt="Tela de recorrências com assinaturas e parcelas mensais" loading="lazy" decoding="async">
+          <img *ngIf="activeDemoTab === 'categorias'" src="assets/marketing/demo-categorias.webp" alt="Tela de categorias personalizadas por cor e tipo" loading="lazy" decoding="async">
         </div>
       </div>
     </div>
