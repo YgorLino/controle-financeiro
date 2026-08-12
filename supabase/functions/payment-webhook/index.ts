@@ -56,12 +56,12 @@ function hexToBytes(value: string): Uint8Array | null {
 }
 
 async function hasValidSignature(
-  dataId: string,
+  dataId: string | null,
   requestId: string | null,
   signature: string | null,
   secret: string,
 ): Promise<boolean> {
-  if (!requestId || !signature) return false
+  if (!signature) return false
 
   const parsed = parseSignature(signature)
   if (!parsed) return false
@@ -77,7 +77,11 @@ async function hasValidSignature(
     false,
     ['verify'],
   )
-  const manifest = `id:${dataId};request-id:${requestId};ts:${parsed.timestamp};`
+  const manifestParts: string[] = []
+  if (dataId?.trim()) manifestParts.push(`id:${dataId.trim()}`)
+  if (requestId?.trim()) manifestParts.push(`request-id:${requestId.trim()}`)
+  manifestParts.push(`ts:${parsed.timestamp}`)
+  const manifest = `${manifestParts.join(';')};`
 
   return crypto.subtle.verify('HMAC', key, receivedHash, encoder.encode(manifest))
 }
@@ -123,20 +127,27 @@ serve(async (req: Request) => {
       return jsonResponse({ ignored: true })
     }
 
-    const webhookSecret = Deno.env.get('MP_WEBHOOK_SECRET')
+    const webhookSecret = Deno.env.get('MP_WEBHOOK_SECRET')?.trim()
     if (!webhookSecret) {
       console.error('Missing MP_WEBHOOK_SECRET')
       return jsonResponse({ error: 'Webhook secret not configured' }, 500)
     }
 
     const signatureIsValid = await hasValidSignature(
-      paymentId,
+      queryPaymentId,
       req.headers.get('x-request-id'),
       req.headers.get('x-signature'),
       webhookSecret,
     )
     if (!signatureIsValid) {
-      console.warn(`Rejected notification with invalid signature for payment ${paymentId}`)
+      console.warn(
+        `Rejected notification with invalid signature for payment ${paymentId}`,
+        {
+          queryDataIdPresent: Boolean(queryPaymentId),
+          requestIdPresent: Boolean(req.headers.get('x-request-id')),
+          signaturePresent: Boolean(req.headers.get('x-signature')),
+        },
+      )
       return jsonResponse({ error: 'Invalid webhook signature' }, 401)
     }
 
