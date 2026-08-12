@@ -63,13 +63,13 @@
             <span class="browser-label">Demonstração com dados fictícios</span>
           </div>
           <picture class="hero-tour">
-            <source media="(prefers-reduced-motion: reduce)" srcset="assets/marketing/dashboard-desktop.webp" type="image/webp">
-            <img src="assets/marketing/controle-financeiro-tour.gif" alt="Demonstração animada do dashboard, movimentações, recorrências e categorias" fetchpriority="high" decoding="async">
+            <source media="(prefers-reduced-motion: reduce)" srcset="/assets/marketing/dashboard-desktop.webp" type="image/webp">
+            <img src="/assets/marketing/controle-financeiro-tour.gif" alt="Demonstração animada do dashboard, movimentações, recorrências e categorias" fetchpriority="high" decoding="async">
           </picture>
         </div>
         
         <div class="mobile-mockup">
-          <img src="assets/marketing/dashboard-mobile.webp" alt="Visão responsiva do dashboard no celular" decoding="async">
+          <img src="/assets/marketing/dashboard-mobile.png" alt="Visão responsiva do dashboard no celular" decoding="async">
         </div>
       </div>
     </div>
@@ -167,10 +167,10 @@
         </div>
 
         <div class="demo-content">
-          <img *ngIf="activeDemoTab === 'visao'" src="assets/marketing/demo-visao.webp" alt="Dashboard com resumo financeiro, saldo e gráficos" loading="lazy" decoding="async">
-          <img *ngIf="activeDemoTab === 'movimentacoes'" src="assets/marketing/demo-movimentacoes.webp" alt="Tela de movimentações com entradas, saídas, filtros e status" loading="lazy" decoding="async">
-          <img *ngIf="activeDemoTab === 'recorrencias'" src="assets/marketing/demo-recorrencias.webp" alt="Tela de recorrências com assinaturas e parcelas mensais" loading="lazy" decoding="async">
-          <img *ngIf="activeDemoTab === 'categorias'" src="assets/marketing/demo-categorias.webp" alt="Tela de categorias personalizadas por cor e tipo" loading="lazy" decoding="async">
+          <img *ngIf="activeDemoTab === 'visao'" src="/assets/marketing/demo-visao.png" alt="Dashboard com resumo financeiro, saldo e gráficos" loading="eager" decoding="async">
+          <img *ngIf="activeDemoTab === 'movimentacoes'" src="/assets/marketing/demo-movimentacoes.webp" alt="Tela de movimentações com entradas, saídas, filtros e status" loading="lazy" decoding="async">
+          <img *ngIf="activeDemoTab === 'recorrencias'" src="/assets/marketing/demo-recorrencias.webp" alt="Tela de recorrências com assinaturas e parcelas mensais" loading="lazy" decoding="async">
+          <img *ngIf="activeDemoTab === 'categorias'" src="/assets/marketing/demo-categorias.webp" alt="Tela de categorias personalizadas por cor e tipo" loading="lazy" decoding="async">
         </div>
       </div>
     </div>
