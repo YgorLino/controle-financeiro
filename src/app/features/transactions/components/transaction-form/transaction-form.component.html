@@ -46,26 +46,32 @@
             </mat-form-field>
 
             <!-- Categoria -->
-            <mat-form-field appearance="outline">
-              <mat-label>Categoria *</mat-label>
-              <mat-select formControlName="category_id">
-                <mat-select-trigger *ngIf="form.get('category_id')?.value as catId">
-                  <ng-container *ngFor="let cat of availableCategories()">
-                    <div *ngIf="cat.id === catId" class="cm-category-item">
+            <div class="category-field-wrapper" style="display: flex; gap: 8px; align-items: flex-start;">
+              <mat-form-field appearance="outline" style="flex: 1">
+                <mat-label>Categoria *</mat-label>
+                <mat-select formControlName="category_id">
+                  <mat-select-trigger *ngIf="form.get('category_id')?.value as catId">
+                    <ng-container *ngFor="let cat of availableCategories()">
+                      <div *ngIf="cat.id === catId" class="cm-category-item">
+                        <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
+                        <span>{{ cat.name }}</span>
+                      </div>
+                    </ng-container>
+                  </mat-select-trigger>
+                  <mat-option *ngFor="let cat of availableCategories()" [value]="cat.id">
+                    <div class="cm-category-item">
                       <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
                       <span>{{ cat.name }}</span>
                     </div>
-                  </ng-container>
-                </mat-select-trigger>
-                <mat-option *ngFor="let cat of availableCategories()" [value]="cat.id">
-                  <div class="cm-category-item">
-                    <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
-                    <span>{{ cat.name }}</span>
-                  </div>
-                </mat-option>
-              </mat-select>
-              <mat-error>Selecione uma categoria.</mat-error>
-            </mat-form-field>
+                  </mat-option>
+                </mat-select>
+                <mat-error>Selecione uma categoria.</mat-error>
+              </mat-form-field>
+              
+              <button type="button" mat-icon-button color="primary" matTooltip="Nova categoria" (click)="openCategoryForm()" style="margin-top: 8px;">
+                <mat-icon>add_circle</mat-icon>
+              </button>
+            </div>
           </div>
 
           <div class="cm-form-row">

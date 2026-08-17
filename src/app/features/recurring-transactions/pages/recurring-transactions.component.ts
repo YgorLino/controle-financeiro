@@ -26,6 +26,7 @@ import { RecurringTransaction, RecurringFormData, RecurringFrequency } from '../
 import { TransactionType } from '../../../core/models/transaction.model';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { DeleteRecurringDialogComponent } from '../../../shared/components/delete-recurring-dialog/delete-recurring-dialog.component';
+import { CategoryFormComponent } from '../../categories/components/category-form/category-form.component';
 import { EmptyStateComponent } from '../../../shared/components/empty-state/empty-state.component';
 import { SkeletonLoaderComponent } from '../../../shared/components/skeleton-loader/skeleton-loader.component';
 import { CurrencyBrPipe } from '../../../shared/pipes/currency-br.pipe';
@@ -111,7 +112,7 @@ export class RecurringTransactionsComponent implements OnInit {
         transaction_type: recurring.transaction_type,
         frequency: recurring.frequency,
         description: recurring.description,
-        amount: recurring.amount,
+        amount: recurring.recurrence_type === 'installment' ? recurring.amount * (recurring.installments || 1) : recurring.amount,
         due_day: recurring.due_day,
         category_id: recurring.category_id ?? '',
         start_date_obj: new Date(recurring.start_date + 'T12:00:00'),
@@ -153,7 +154,7 @@ export class RecurringTransactionsComponent implements OnInit {
         transaction_type: v.transaction_type as TransactionType,
         frequency: v.frequency as RecurringFrequency,
         description: v.description!,
-        amount: Number(v.amount),
+        amount: v.recurrence_type === 'installment' && v.installments ? Number(v.amount) / Number(v.installments) : Number(v.amount),
         due_day: Number(v.due_day),
         category_id: v.category_id || null,
         start_date: format(v.start_date_obj as Date, 'yyyy-MM-dd'),
@@ -184,6 +185,19 @@ export class RecurringTransactionsComponent implements OnInit {
     } catch {
       this.notify.error('Não foi possível alterar o status da recorrência.');
     }
+  }
+
+  openCategoryForm(): void {
+    const dialogRef = this.dialog.open(CategoryFormComponent, {
+      width: '400px',
+      maxWidth: '98vw'
+    });
+
+    dialogRef.afterClosed().subscribe((newCategoryId: any) => {
+      if (newCategoryId) {
+        this.form.patchValue({ category_id: newCategoryId });
+      }
+    });
   }
 
   confirmDelete(r: RecurringTransaction): void {
@@ -228,5 +242,11 @@ export class RecurringTransactionsComponent implements OnInit {
   formatDate(date: string | null): string {
     if (!date) return '—';
     return new Date(date + 'T12:00:00').toLocaleDateString('pt-BR');
+  }
+
+  get installmentValue(): number {
+    const amount = Number(this.form.get('amount')?.value) || 0;
+    const installments = Number(this.form.get('installments')?.value) || 1;
+    return amount / installments;
   }
 }

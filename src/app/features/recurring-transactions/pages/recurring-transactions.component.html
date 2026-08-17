@@ -162,9 +162,12 @@
 
           <div class="cm-form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Valor *</mat-label>
+              <mat-label>{{ form.get('recurrence_type')?.value === 'installment' ? 'Valor Total da Compra *' : 'Valor *' }}</mat-label>
               <span matPrefix>R$&nbsp;</span>
               <input matInput type="number" formControlName="amount" min="0.01" step="0.01">
+              <mat-hint *ngIf="form.get('recurrence_type')?.value === 'installment' && form.get('amount')?.value && form.get('installments')?.value">
+                Cada parcela será de {{ installmentValue | currencyBr }}
+              </mat-hint>
               <mat-error>Informe um valor válido.</mat-error>
             </mat-form-field>
 
@@ -177,26 +180,32 @@
           </div>
 
           <div class="cm-form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Categoria</mat-label>
-              <mat-select formControlName="category_id">
-                <mat-select-trigger *ngIf="form.get('category_id')?.value as catId">
-                  <ng-container *ngFor="let cat of categoryService.categories()">
-                    <div *ngIf="cat.id === catId" class="cm-category-item">
+            <div class="category-field-wrapper" style="display: flex; gap: 8px; align-items: flex-start; flex: 1;">
+              <mat-form-field appearance="outline" style="flex: 1">
+                <mat-label>Categoria</mat-label>
+                <mat-select formControlName="category_id">
+                  <mat-select-trigger *ngIf="form.get('category_id')?.value as catId">
+                    <ng-container *ngFor="let cat of categoryService.categories()">
+                      <div *ngIf="cat.id === catId" class="cm-category-item">
+                        <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
+                        <span>{{ cat.name }}</span>
+                      </div>
+                    </ng-container>
+                  </mat-select-trigger>
+                  <mat-option value="">Sem categoria</mat-option>
+                  <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
+                    <div class="cm-category-item">
                       <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
                       <span>{{ cat.name }}</span>
                     </div>
-                  </ng-container>
-                </mat-select-trigger>
-                <mat-option value="">Sem categoria</mat-option>
-                <mat-option *ngFor="let cat of categoryService.categories()" [value]="cat.id">
-                  <div class="cm-category-item">
-                    <mat-icon class="cm-category-icon" [style.color]="cat.color">{{ cat.icon || 'category' }}</mat-icon>
-                    <span>{{ cat.name }}</span>
-                  </div>
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button type="button" mat-icon-button color="primary" matTooltip="Nova categoria" (click)="openCategoryForm()" style="margin-top: 8px;">
+                <mat-icon>add_circle</mat-icon>
+              </button>
+            </div>
 
             <mat-form-field appearance="outline">
               <mat-label>Data de início *</mat-label>

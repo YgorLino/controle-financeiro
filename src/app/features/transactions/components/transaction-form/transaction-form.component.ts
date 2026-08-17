@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,6 +21,7 @@ import { CategoryService } from '../../../../core/services/category.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { Transaction, TransactionStatus, TransactionType } from '../../../../core/models/transaction.model';
 import { Category } from '../../../../core/models/category.model';
+import { CategoryFormComponent } from '../../../categories/components/category-form/category-form.component';
 import { format, startOfMonth } from 'date-fns';
 
 export interface TransactionFormDialogData {
@@ -49,6 +50,7 @@ export class TransactionFormComponent implements OnInit {
   private readonly categoryService = inject(CategoryService);
   private readonly notify = inject(NotificationService);
   private readonly fb = inject(FormBuilder);
+  private readonly dialog = inject(MatDialog);
 
   readonly data: TransactionFormDialogData = inject(MAT_DIALOG_DATA) ?? {};
 
@@ -137,6 +139,20 @@ export class TransactionFormComponent implements OnInit {
     } else {
       this.availableCategories.set(this.categoryService.categories());
     }
+  }
+
+  openCategoryForm(): void {
+    const dialogRef = this.dialog.open(CategoryFormComponent, {
+      width: '400px',
+      maxWidth: '98vw'
+    });
+
+    dialogRef.afterClosed().subscribe((newCategoryId: any) => {
+      if (newCategoryId) {
+        this.updateAvailableCategories();
+        this.form.patchValue({ category_id: newCategoryId });
+      }
+    });
   }
 
   async onSave(): Promise<void> {

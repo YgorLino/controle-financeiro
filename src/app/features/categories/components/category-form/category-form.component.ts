@@ -84,13 +84,14 @@ export class CategoryFormComponent implements OnInit {
     try {
       const formData = this.form.value as CategoryFormData;
       if (this.isEdit && this.data.category) {
-        await this.categoryService.updateCategory(this.data.category.id, formData);
+        const updated = await this.categoryService.updateCategory(this.data.category.id, formData);
         this.notify.success('Categoria atualizada com sucesso.');
+        this.dialogRef.close(updated.id);
       } else {
-        await this.categoryService.createCategory(formData);
+        const created = await this.categoryService.createCategory(formData);
         this.notify.success('Categoria criada com sucesso.');
+        this.dialogRef.close(created.id);
       }
-      this.dialogRef.close(true);
     } catch (err: any) {
       this.notify.error(err?.message ?? 'Não foi possível salvar a categoria.');
     } finally {
