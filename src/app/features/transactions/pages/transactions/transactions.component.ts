@@ -34,6 +34,7 @@ import { ReferenceMonthPipe } from '../../../../shared/pipes/reference-month.pip
 import { TransactionFormComponent } from '../../components/transaction-form/transaction-form.component';
 import { exportTransactionsToCsv } from '../../../../shared/utils/csv-export.utils';
 import { isOverdue, formatDatePtBr } from '../../../../shared/utils/date.utils';
+import { sortTransactionsForDisplay } from '../../../../shared/utils/transaction-order.utils';
 import { startOfMonth, format } from 'date-fns';
 
 @Component({
@@ -85,13 +86,15 @@ export class TransactionsComponent implements OnInit {
     const status = this.statusCtrl.value ?? '';
     const type = this.typeCtrl.value ?? '';
 
-    return this.transactionService.transactions().filter(t => {
+    const filtered = this.transactionService.transactions().filter(t => {
       if (search && !t.description.toLowerCase().includes(search)) return false;
       if (cat && t.category_id !== cat) return false;
       if (status && t.status !== status) return false;
       if (type && t.transaction_type !== type) return false;
       return true;
     });
+
+    return sortTransactionsForDisplay(filtered);
   });
 
   readonly totalIncome = computed(() => {
@@ -299,8 +302,12 @@ export class TransactionsComponent implements OnInit {
       if (!confirmed) return;
       try {
         const count = await this.transactionService.copyPreviousMonth(monthStr);
-        this.notify.success(`${count} movimentação(ões) copiada(s) com sucesso.`);
-        await this.refreshAfterMutation();
+        if (count > 0) {
+          this.notify.success(`${count} movimentação(ões) copiada(s) com sucesso.`);
+        } else {
+          this.notify.info('Não há novas movimentações para copiar do mês anterior.');
+        }
+        await this.refreshAfterMutation(true);
       } catch {
         this.notify.error('Não foi possível copiar as movimentações.');
       }

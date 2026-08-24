@@ -187,7 +187,7 @@ export class TransactionService {
     };
   }
 
-  async copyPreviousMonth(targetMonth: string): Promise<Transaction[]> {
+  async copyPreviousMonth(targetMonth: string): Promise<number> {
     const targetDate = parseISO(targetMonth);
     const prevMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() - 1, 1);
     const prevMonthStr = format(prevMonth, 'yyyy-MM-01');
@@ -198,37 +198,79 @@ export class TransactionService {
       .eq('reference_month', prevMonthStr);
 
     if (error) throw error;
-    if (!prevTransactions || prevTransactions.length === 0) return [];
+    if (!prevTransactions || prevTransactions.length === 0) return 0;
 
     const user = this.auth.currentUser();
     if (!user) throw new Error('Não autenticado');
 
-    const avulsas = prevTransactions.filter((t: Transaction) => !t.recurring_transaction_id);
-    if (avulsas.length === 0) return [];
+    const recurringIds = [
+      ...new Set(
+        prevTransactions
+          .map((t: Transaction) => t.recurring_transaction_id)
+          .filter((id): id is string => Boolean(id))
+      )
+    ];
 
-    const newTransactions = avulsas.map((t: Transaction) => ({
+    const existingRecurringIds = new Set<string>();
+    if (recurringIds.length > 0) {
+      const { data: existingRecurring, error: existingError } = await this.supabase.client
+        .from('transactions')
+        .select('recurring_transaction_id')
+        .eq('reference_month', targetMonth)
+        .in('recurring_transaction_id', recurringIds);
+
+      if (existingError) throw existingError;
+      for (const transaction of existingRecurring ?? []) {
+        if (transaction.recurring_transaction_id) {
+          existingRecurringIds.add(transaction.recurring_transaction_id);
+        }
+      }
+    }
+
+    const transactionsToCopy = prevTransactions.filter(
+      (t: Transaction) => !t.recurring_transaction_id || !existingRecurringIds.has(t.recurring_transaction_id)
+    );
+    if (transactionsToCopy.length === 0) return 0;
+
+    const newTransactions = transactionsToCopy.map((t: Transaction) => ({
       description: t.description,
       transaction_type: t.transaction_type,
       amount: t.amount,
       category_id: t.category_id,
       reference_month: targetMonth,
-      due_date: null,
+      due_date: this.moveDueDateToMonth(t.due_date, targetDate),
       status: 'pending' as TransactionStatus,
       payment_date: null,
       notes: t.notes,
-      recurring_transaction_id: null,
+      recurring_transaction_id: t.recurring_transaction_id,
       account_id: t.account_id,
       user_id: user.id
     }));
 
-    const { data: created, error: insertError } = await this.supabase.client
+    const { error: insertError } = await this.supabase.client
       .from('transactions')
-      .insert(newTransactions)
-      .select(`*, category:categories!category_id(id, name, color, transaction_type)`);
+      .insert(newTransactions);
 
     if (insertError) throw insertError;
-    this._transactions.update(txns => [...(created ?? []), ...txns]);
-    return created ?? [];
+    return newTransactions.length;
+  }
+
+  private moveDueDateToMonth(dueDate: string | null, targetMonth: Date): string | null {
+    if (!dueDate) return null;
+
+    const sourceDay = parseISO(dueDate).getDate();
+    const lastDayOfTargetMonth = new Date(
+      targetMonth.getFullYear(),
+      targetMonth.getMonth() + 1,
+      0
+    ).getDate();
+    const targetDueDate = new Date(
+      targetMonth.getFullYear(),
+      targetMonth.getMonth(),
+      Math.min(sourceDay, lastDayOfTargetMonth)
+    );
+
+    return format(targetDueDate, 'yyyy-MM-dd');
   }
 
   async getFuturePendingInstallments(recurringId: string, currentReferenceMonth: string): Promise<Transaction[]> {
